@@ -1,0 +1,25 @@
+---
+title: "Untitled"
+author: "Alex"
+date: "2024-05-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+files.sources = list.files("~/Projects/Doctoraat/sgdGMFWrapper/scater/R")
+sapply(paste0("~/Projects/Doctoraat/sgdGMFWrapper/scater/R/",files.sources), source)
+```
+
+```{r}
+library(DelayedArray)
+library(BiocParallel)
+library(beachmat)
+library(scater)
+sce <- runPCA(sce)
+```
+

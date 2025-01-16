@@ -1,0 +1,45 @@
+Package: scSGDGMF
+Type: Package
+Authors@R: c(
+        person("Alexandre", "Segers", role=c("aut", "cre"), email="alexandresegers@outlook.com"),
+        person("Cristian", "Castiglione", role=c("ctb"), email=""),
+        person("Christophe", "Vanderaa", role = c("ctb"), email="christophe.vanderaa@ugent.be"),
+        person("Davide", "Risso", role=c("ctb"), email=""),
+        person("Lieven", "Clement", role=c("ctb"), email="lieven.clement@ugent.be")
+	)
+Version: 0.1.0
+Date: 2025-01-14
+Title: Dimensionality reduction of (single-cell) omics data in R
+Description: VignetteBuilder: knitr to add
+    More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+biocViews: SingleCell, RNASeq, Proteomics, QualityControl, Preprocessing, Normalization,
+        Visualization, DimensionReduction, Transcriptomics,
+        GeneExpression, Sequencing, Software,
+        DataRepresentation
+Depends: 
+    sgdGMF,
+    SingleCellExperiment,
+    scuttle,
+    scater,
+    ggplot2
+Imports: 
+    stats,
+    utils,
+    methods,
+    Matrix,
+    BiocGenerics,
+    S4Vectors,
+    SummarizedExperiment,
+    DelayedArray,
+    MatrixGenerics,
+    BiocNeighbors,
+    BiocSingular,
+    BiocParallel
+Suggests: 
+    knitr,
+    dplyr
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1

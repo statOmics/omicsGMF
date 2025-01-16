@@ -1,0 +1,237 @@
+---
+title: "Untitled"
+author: "Alex"
+date: "2024-05-21"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+
+```
+
+# load data
+```{r}
+path <- "/Users/alexandresegers/Projects/Doctoraat/sgd_RNAseq/sgdGMF_Paper/Benchmarking/Files_Davide"
+
+df_eigenvalues <- readRDS(file = paste0(path, "/df_eigenvalues.RDS"))
+
+df_model_selection <- readRDS(file = paste0(path, "/df_model_selection.RDS"))
+
+df_purity <- readRDS(file = paste0(path, "/df_purity.RDS"))
+
+df_tsne_plot <- readRDS(file = paste0(path,"/df_tsne_plot.RDS"))
+
+
+df_clust_tsne <- readRDS(file = paste0(path,"/df_clust_tsne.RDS"))
+
+df_tile_confusion <- readRDS(file = paste0(path,"/df_tile_confusion.RDS"))
+
+celltypes <- readRDS(file = paste0(path, "/celltypes.RDS"))
+
+plot_time <- readRDS(file = paste0(path, "/plot_time.RDS"))
+plot_heatmap <- readRDS(file = paste0(path, "/heatmap_clusters_10LF.RDS"))
+```
+
+
+```{r}
+scaleFUN <- function(x) sprintf("%.1f", x)
+
+```
+
+# Arigoni model selection
+
+## Selection criteria
+```{r}
+df_model_selection_summary <- df_model_selection %>%
+  group_by(ncomp, vars) %>%
+  summarise(median = median(values, na.rm = TRUE),
+            ymin = min(values, na.rm = TRUE),
+            ymax = max(values, na.rm = TRUE))
+
+# Plot
+
+
+p_criteria <- ggplot(data = df_model_selection_summary, aes(x = ncomp, y = median)) + 
+      geom_errorbar(aes(ymin = ymin, ymax = ymax), width = 0.2, col = "grey67") +
+
+  geom_point() +
+  geom_point(data = df_model_selection_summary %>% filter(ncomp == 15 & vars == "AIC"), 
+               aes(x=ncomp, y = median, col = "red")) + 
+  geom_point(data = df_model_selection_summary %>% filter(ncomp == 6 & vars == "BIC"), 
+               aes(x=ncomp, y = median, col = "red")) + 
+  geom_point(data = df_model_selection_summary %>% filter(ncomp == 15 & vars == "Deviance"), 
+               aes(x=ncomp, y = median, col = "red")) + 
+
+
+  facet_grid(scale = "free_y", rows = vars(vars)) +
+  theme_bw() +
+  xlab("Matrix rank") +
+  theme(axis.title.y = element_blank(), legend.position = "none") +
+  scale_y_continuous(labels = scaleFUN) +
+  theme(plot.margin = margin(0.3, 0.2, 0.2, 0.3, "cm"),
+        strip.text = element_text(size = 11))
+
+
+labels_eigs <- c("Eigenvalues")
+names(labels_eigs) <- "1"
+
+peigs <- ggplot(data = df_eigenvalues %>% filter(ncomp %in% (c(1:10, 15, 20, 30, 40, 50))), aes(x = as.factor(ncomp), y = eigenvalues)) + geom_point() +   facet_wrap(~facet, scale = "free_y", labeller = labeller(facet = labels_eigs), strip.position = "right") + theme_bw() + 
+  xlab("Matrix rank") +
+   theme(legend.position = "bottom", 
+         legend.title = element_blank(), 
+         legend.text = element_text(size = 10),
+         axis.title.y = element_blank()) + theme(plot.margin = margin(0.3, 0.2, 0.2, 0.3, "cm"),
+         strip.text = element_text(size = 11)) + geom_vline(xintercept = 6.5, col = "red")
+
+peigs
+
+p_criteria
+```
+
+## Purity
+
+```{r}
+labels_purity <- c("Mean cluster purity")
+names(labels_purity) <- "1"
+
+p_purity_lineplot_rescaled <- ggplot(data = df_purity, aes(x = (dim), y = mean, col = maximum)) + 
+  geom_point(key_glyph = "rect") + geom_line(aes(x = as.numeric(dim)), key_glyph = "rect") + theme_bw() + labs(col ="Celltype") +
+  facet_wrap(~facet, scale = "free_y", labeller = labeller(facet = labels_purity), strip.position = "right") + 
+  xlab("Matrix rank") +
+  theme(legend.position = "right", 
+        legend.text = element_text(size = 10),
+        axis.title.y = element_blank()) + theme(plot.margin = margin(0.3, 0.2, 0.2, 0.3, "cm"),
+        strip.text = element_text(size = 11))
+p_purity_lineplot_rescaled
+p_purity_lineplot_rescaled + theme(legend.position = "none")
+```
+## t-SNE
+
+```{r}
+dim.labs.tsne <- c("Matrix rank: 6", "Matrix rank: 15", "Matrix rank: 30")
+names(dim.labs.tsne) <- c( "6", "15", "30")
+
+p_tsne <- ggplot(df_tsne_plot %>% filter(dim %in% c(6, 15, 30)), aes(x  = V1, y = V2, col = celltypes)) +
+  geom_point( alpha = 0.2, size = 0.5) + 
+  facet_wrap(~ dim, labeller = labeller(dim = dim.labs.tsne), ncol = 3) +
+  theme_bw() + 
+  labs(col = "Celltype") + 
+  theme(legend.position = "right", 
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(size = 11)) + 
+  #theme(plot.margin = margin(0.3, 0.2, 0.2, 1, "cm")) + 
+  guides(color = guide_legend(
+    override.aes = list(#shape = 15, 
+                        size = 4, 
+                        alpha = 1)))
+
+
+
+p_tsne
+```
+
+
+## Clustering
+```{r}
+p_tsne_clust <- ggplot(data = df_clust_tsne, aes(x = T1, y = T2, col = membership)) + 
+  geom_point(alpha = 0.2, size = 0.5) +   
+  facet_wrap(~dims, ncol = 3) + 
+  theme_bw() + 
+  labs(col = "Cluster") + 
+  theme(legend.position = "right", 
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank()) + 
+  #theme(plot.margin = margin(0.3, 0.2, 0.2, 1, "cm")) + 
+  guides(color = guide_legend(
+    override.aes = list(#shape = 15, 
+                        size = 4, 
+                        alpha = 1))) + 
+  scale_color_brewer(palette = "Dark2")
+
+p_tsne_clust
+
+```
+
+
+```{r}
+library(ggh4x)
+labels_celltypes <- rep(c(""), times = 7)
+names(labels_celltypes) <- unique(celltypes)
+
+ptile_confusion <- ggplot(data = df_tile_confusion, 
+         aes(x = as.factor(cluster), y = as.numeric(celltypes), fill = hits)) + 
+  geom_tile()  +
+  #facet_wrap(~dims, ncol = 1) +
+  scale_fill_gradientn(colours = c("white","red")) +
+  facet_grid2(celltypes~dims, scales = "free_y", space = "free_y",
+              strip = strip_themed(
+                background_y = elem_list_rect(
+                  fill = rainbow(length(unique(celltypes))))),
+              labeller = labeller(celltypes = labels_celltypes)) +
+  #labs(fill ="Factor mean")+
+                    xlab("Cluster") +
+                    theme_bw()+
+                    theme(legend.text = element_text(size = 11),
+                                                  legend.title = element_blank(),
+                                                  legend.position = "none",
+                          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                          panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.2),
+                          axis.title.y = element_blank(),
+                           panel.spacing.y = unit(0,"mm"),
+                          strip.background.x = element_blank(),
+                          strip.text.x = element_blank())+
+  scale_y_continuous(
+    labels = unique(df_tile_confusion$celltypes),
+    breaks = as.numeric(unique(df_tile_confusion$celltypes)),
+    expand = c(0,0),
+    position = "right"
+  )  + geom_vline(xintercept = c(1.5,2.5,3.5,4.5,5.5,6.5), col = "black", linewidth = 0.2)
+ptile_confusion
+```
+
+
+# Case Study
+
+## Time
+
+```{r}
+plot_time
+```
+
+
+## Heatmap
+```{r}
+pheatmap <- ggplotify::as.ggplot(plot_heatmap)
+pheatmap
+```
+
+## combination
+```{r}
+plot_casestudy <- ggarrange(ggplotify::as.ggplot(plot_heatmap), 
+                            plot_time + theme(legend.position = "top",
+                                              legend.text = element_text(size = 10),
+                                              legend.title = element_text(size = 12),
+                                              panel.grid = element_blank(),
+                                              plot.margin = margin(r = 10)) + 
+    guides(color=guide_legend(nrow=2, byrow=TRUE, title.position ="top", title.hjust = 0.5)), 
+                            ncol = 2, 
+                            widths = c(3,2),labels = "AUTO")
+
+plot_casestudy
+```
+
