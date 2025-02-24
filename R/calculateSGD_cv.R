@@ -19,8 +19,9 @@
 #' @param scale Logical scalar, should the expression values be standardized? Not recommended for non-Gaussian data.
 #' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which algorithm should be used to perform the PCA.
 #' This is used in \code{runPCA} to put all information in the sample latent factors.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether the initialization and cross-validation
-#' should be parallelized. Currently not yet implemented.
+#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether the cross-validation
+#' should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and control.cv$nthreads are
+#' not specified, parallelization is enabled with nthreads = BPPARAM$workers.
 #' @param altexp String or integer scalar specifying an alternative experiment containing the input data.
 #' @param dimred String or integer scalar specifying the existing dimensionality reduction results to use.
 #' @param n_dimred Integer scalar or vector specifying the dimensions to use if \code{dimred} is specified.
@@ -141,8 +142,15 @@ NULL
 
   if (method == "sgd" & sampling == "block") control.alg = do.call(".set.control.bsgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
 
+  if(BPPARAM$workers > 1 & is.null(control.cv$parallel) & is.null(control.cv$nthreads)){
+      control.cv$parallel <- TRUE
+      control.cv$nthreads <- BPPARAM$workers
+
+  }
+
   control.cv = do.call(sgdGMF::set.control.cv, control.cv)
   control.cv$refit <- FALSE
+
 
   # if (method == "airwls") control.alg = do.call("set.control.airwls", control.alg)
   # if (method == "newton") control.alg = do.call("set.control.newton", control.alg)
