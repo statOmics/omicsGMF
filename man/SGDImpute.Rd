@@ -17,7 +17,6 @@ SGDImpute(x, ...)
   x,
   reducedDimName = "SGD",
   sgdGMF_reducedDims = reducedDim(x, reducedDimName),
-  ...,
   exprs_values = 1,
   assay.type = exprs_values
 )
@@ -27,12 +26,15 @@ SGDImpute(x, ...)
 features in the rows and samples in columns.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{sgdGMF_reducedDims}{the output obtained by \code{'runSGD'} or \code{'calculateSGD'}. If \code{x} is a
+\item{sgdGMF_reducedDims}{the output obtained by \code{\link{'runSGD'}} or \code{\link{'calculateSGD'}}. If \code{x} is a
 \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken from \code{\link{reducedDim}(x, 'SGD')}.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
 
 \item{assay.type}{Integer scalar or string indicating which assay of \code{x} contains the values of interest.}
+
+\item{reducedDimName}{the name of the \code{\link{reducedDim}} slot corresponding to the dimensionality reduction
+obtained with runSGD when \code{x} is a \linkS4class{SingleCellExperiment}.}
 }
 \value{
 A SingleCellExperiment object is returned with an extra assay containing the imputed values.
@@ -46,17 +48,13 @@ Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
 }
 \examples{
 example_sce <- mockSCE()
-
-
 example_sce <- logNormCounts(example_sce)
-
-example_sce <- runSGD(example_sce)
-reducedDimNames(example_sce)
-head(reducedDim(example_sce))
+assay(example_sce, 'logcounts')[c(1,5,10)] <- NA
+example_sce <- runSGD(example_sce, exprs_values="logcounts", family = gaussian(), ncomponents = 3)
+example_sce <- SGDImpute(example_sce)
 }
 \seealso{
-\code{\link[BiocSGDGMF]{runSGD}}, to conveniently obtain the matrix factorization.
-\code{\link[BiocSGDGMF]{plotSGD}}, to conveniently visualize the results.
+\code{\link[scSGDGMF]{runSGD}}, to conveniently obtain the matrix factorization.
 }
 \author{
 Alexandre Segers

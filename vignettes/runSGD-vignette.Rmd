@@ -2,9 +2,9 @@
 title: 'Main vignette: Aberrant expression and splicing analysis'
 author:
 - name: Alexandre Segers
-bibliography: 
+bibliography: sgdGMF.bib
 date: "14/01/2025"
-output: sgdGMF.bib
+output: 
   BiocStyle::html_document:
     toc: true
     toc_depth: 3
@@ -74,10 +74,12 @@ a standard workflow on proteomics data.
 `scSGDGMF` can be installed from Bioconductor with:
 
 ```{r, eval=FALSE}
-devtools::install_github("CristianCastiglione/sgdGMF")
+if(!requireNamespace("sgdGMF", quietly = TRUE))
+    install("sgdGMF")
 
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
+
 BiocManager::install("scSGDGMF")
 ```
 
@@ -152,7 +154,7 @@ example_sce <- runSGD(example_sce,
                       ntop = 500)
 ```
 
-After computing the matrix factorization, one can visualize the results with functions from the \link{scater} package. For example, using `plotReducedDim`, one obtains a PCA plot, using the latent factors obtained by `scSGDGMF`. 
+After computing the matrix factorization, one can visualize the results with functions from the \link{scater} package. For example, using `plotReducedDim`, one obtains a PCA plot, using the latent factors obtained by `scSGDGMF`. The same plot can be obtained using the wrapper function `plotSGD`.
 
 ```{r}
 plotReducedDim(example_sce, dimred = "SGD")

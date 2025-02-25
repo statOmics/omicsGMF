@@ -1,0 +1,8 @@
+linters: with_defaults(
+  line_length_linter = line_length_linter(120),  # Allow longer lines up to 120 characters
+  object_usage_linter = NULL,  # Disable object usage linter
+  commented_code_linter = NULL,  # Disable commented code linter
+  cyclomatic_complexity_linter = NULL,  # Disable cyclomatic complexity linter
+  assignment_linter = NULL  # Disable assignment linter (e.g., for using '=' instead of '<-')
+)
+

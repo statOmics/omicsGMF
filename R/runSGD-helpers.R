@@ -255,7 +255,7 @@
             o <- order(rv, decreasing = TRUE)
             subset_row <- head(o, ntop)
         } else if (is.character(subset_row)) {
-            subset_row <- .subset2index(subset_row, x, byrow=TRUE)
+            subset_row <- scater:::.subset2index(subset_row, x, byrow=TRUE)
         }
 
         x <- x[subset_row,, drop = FALSE]
@@ -275,8 +275,9 @@
 
     if (scale) {
         if(family$family != "gaussian"){
-            stop("scale == TRUE while family is not Gaussian.
-                    This could lead to wrong results. If using poisson or
+            stop("scale == TRUE while family is not 'gaussian()'.
+                    Scaling should not be done when using count data.
+                    If using poisson or
                     negative binomial family, put scale to FALSE.")
         }
         keep <- rv >= 1e-8

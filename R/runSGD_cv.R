@@ -1,5 +1,5 @@
-#' Perform a principal components analysis (PCA) on cells,
-#' based on the expression data in a SingleCellExperiment object.
+#' Perform a stochastic gradient descent generalized matrix factorization (sgdGMF) on cells,
+#' based on the expression or mass spectrometry data in a SingleCellExperiment object.
 #'
 #' @param x For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
 #' rows are features and columns are cells.
@@ -64,22 +64,24 @@
 #'
 #'
 #' @return
-#' A table containing the summary statistics of the cross-validation.
+#' A table containing the summary statistics of the cross-validation. If a
+#' \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} was
+#' given as input, this is stored in the metadata of this object.
 #'
 #' @name runSGD_cv
 #' @seealso
-#' \code{\link[sgdGMF]{sgdgmf.fit}}, for the underlying calculations.
-#' \code{\link[scater]{plotPCA}}, to conveniently visualize the results.
+#' \code{\link[sgdGMF]{sgdgmf.cv}}, for the underlying calculations.
 #'
 #' @author Alexandre Segers
 #'
 #' @examples
 #' example_sce <- mockSCE()
-#' example_sce <- logNormCounts(example_sce)
-#'
-#' example_sce <- runPCA(example_sce)
+#' example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
+#' head(metadata(example_sce)[["SGD"]])
+#' example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
 #' reducedDimNames(example_sce)
 #' head(reducedDim(example_sce))
+
 NULL
 
 #' @importFrom MatrixGenerics colVars
@@ -88,6 +90,7 @@ NULL
 #' @importFrom BiocParallel SerialParam bpstart bpstop
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.cv
+#' @importFrom stats poisson
 .calculate_sgd_cv <- function(x, family = poisson(), ncomponents = 1:10, ntop=NULL,
                               X = NULL, Z = NULL, offset = NULL, weights = NULL,
                               subset_row=NULL, scale=FALSE, transposed=FALSE,
@@ -171,7 +174,7 @@ NULL
                            penalty = penalty,
                            control.init = control.init,
                            control.alg = control.alg,
-                           control.cv = control.cv) # TODO maybe include, BPPARAM=BPPARAM, of dit toevoegen aan control.init en control.alg
+                           control.cv = control.cv)
 
   return (sgd$summary.cv)
 }
@@ -183,18 +186,46 @@ setMethod("calculateSGD_cv", "ANY", .calculate_sgd_cv)
 #' @export
 #' @rdname runSGD_cv
 #' @importFrom SummarizedExperiment assay
-setMethod("calculateSGD_cv", "SummarizedExperiment", function(x, ..., exprs_values="counts", assay.type=exprs_values, family = poisson()) {
-  .calculate_sgd_cv(assay(x, assay.type), family, ...)
+#' @importFrom stats poisson
+setMethod("calculateSGD_cv", "SummarizedExperiment", function(x, ..., exprs_values="counts", assay.type=exprs_values, family = poisson())
+{
+    .checkfamily(assay(x, assay.type), family)
+    .calculate_sgd_cv(assay(x, assay.type), family, ...)
 })
 
 #' @export
 #' @rdname runSGD_cv
+#' @importFrom stats poisson
 setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_values="counts", dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = poisson())
 {
-
-  mat <- as.matrix(.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
+  mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
   .checkfamily(mat, family)
-
   .calculate_sgd_cv(mat, family, transposed=!is.null(dimred), ...)
 })
+
+
+#' @export
+#' @rdname runSGD_cv
+#' @importFrom SummarizedExperiment metadata<-
+setMethod("runSGD_cv", "SummarizedExperiment", function(x, ..., name = "cv_SGD")
+{
+    metadata(x)[[name]] <- calculateSGD_cv(x, ...)
+    x
+})
+
+#' @export
+#' @rdname runSGD_cv
+#' @importFrom SummarizedExperiment metadata<-
+#' @importFrom SingleCellExperiment altExp
+setMethod("runSGD_cv", "SingleCellExperiment", function(x, ..., altexp = NULL, name = "cv_SGD")
+{
+    if (!is.null(altexp)) {
+        y <- altExp(x, altexp)
+    } else {
+        y <- x
+    }
+    metadata(x)[[name]] <- calculateSGD_cv(x, ...)
+    x
+})
+
 

@@ -84,7 +84,7 @@
 #' In such cases, the method is run on data from an alternative \linkS4class{SummarizedExperiment} nested within \code{x}.
 #' This is useful for performing dimensionality reduction on other features stored in \code{\link{altExp}(x, altexp)}, e.g., antibody tags.
 #'
-#' Setting \code{altexp} with \code{assay.type} will use the specified assay from the alternative SummarizedExperiment.
+#' Setting \code{altexp} with \code{assay.type} will use the specified assay from the alternative \linkS4class{SummarizedExperiment}.
 #' If the alternative is a SingleCellExperiment, setting \code{dimred} will use the specified dimensionality reduction results from the alternative.
 #' This option will also interact as expected with \code{n_dimred}.
 #'
@@ -115,13 +115,13 @@
 #' @seealso
 #' \code{\link[sgdGMF]{sgdgmf.fit}}, for the underlying calculations.
 #'
-#' \code{\link[BiocSGDGMF]{plotSGD}}, to conveniently visualize the results.
-#' \code{\link[BiocSGDGMF]{SGDImpute}}, to conveniently impute missing values.
+#' \code{\link[scSGDGMF]{plotSGD}}, to conveniently visualize the results.
+#' \code{\link[scSGDGMF]{SGDImpute}}, to conveniently impute missing values.
 #' @author Alexandre Segers
 #'
 #' @examples
 #' example_sce <- mockSCE()
-#' cv <- calculateSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
+#' example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
 #' example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
 #' reducedDimNames(example_sce)
 #' head(reducedDim(example_sce))
@@ -133,6 +133,7 @@ NULL
 #' @importFrom BiocParallel SerialParam bpstart bpstop
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.fit sgdgmf.cv
+#' @importFrom stats poisson
 .calculate_sgd <- function(x, family = poisson(), ncomponents = 50, ntop=NULL,
                            X = NULL, Z = NULL, offset = NULL, weights = NULL,
                            subset_row=NULL, scale=FALSE, transposed=FALSE,
@@ -171,7 +172,7 @@ NULL
             } else if(all(dim(offset) == dim(t(x)))){
                 offset <- offset[,c(rownames(x)) %in% colnames(out$x), drop = F]
             } else{
-                stop("Offset does not have equal dimensions compared to the assay used.")
+                stop("Offset does not have equal dimensions as the assay used.")
             }
         }
 
@@ -181,7 +182,7 @@ NULL
             } else if(all(dim(weights) == dim(t(x)))){
                 weights <- weights[,c(rownames(x)) %in% colnames(out$x), drop = F]
             } else{
-                stop("Weights does not have equal dimensions compared to the assay used.")
+                stop("Weights does not have equal dimensions as the assay used.")
             }
         }
 
@@ -195,10 +196,11 @@ NULL
 
 
     if (method == "sgd" & sampling == "block") control.alg = do.call(".set.control.bsgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+    if (method == "sgd" & sampling == "coord") control.alg = do.call(".set.control.csgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+
     # if (method == "airwls") control.alg = do.call("set.control.airwls", control.alg)
     # if (method == "newton") control.alg = do.call("set.control.newton", control.alg)
     # if (method == "msgd") control.alg = do.call("set.control.msgd", control.alg)
-    if (method == "sgd" & sampling == "coord") control.alg = do.call(".set.control.csgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
     # if (method == "rsgd") control.alg = do.call("set.control.rsgd", control.alg)
 
     if(crossval){
@@ -250,8 +252,8 @@ NULL
 
     }
 
-    varExplained <- orth_sgd$sdev^2 #TODO: not rightwhen non gaussian? remove?
-    percentVar <- varExplained / sum(cv) * 100# TODO: not right when non gaussian? remove?
+    varExplained <- orth_sgd$sdev^2 #TODO: not rightwhen non gaussian? Also not right when including covariates? remove?
+    percentVar <- varExplained / sum(cv) * 100# TODO: not right when non gaussian? Also not right when including covariates?  remove?
 
     # Saving the results
     pcs <- orth_sgd$x
@@ -283,25 +285,27 @@ setMethod("calculateSGD", "ANY", .calculate_sgd)
 #' @export
 #' @rdname runSGD
 #' @importFrom SummarizedExperiment assay
+#' @importFrom stats poisson
 setMethod("calculateSGD", "SummarizedExperiment", function(x, ..., exprs_values="counts", assay.type=exprs_values, family = poisson()) {
+    .checkfamily(assay(x, assay.type), family)
     .calculate_sgd(assay(x, assay.type), family, ...)
 })
 
 #' @export
 #' @rdname runSGD
-
+#' @importFrom SummarizedExperiment assay
+#' @importFrom stats poisson
 setMethod("calculateSGD", "SingleCellExperiment", function(x, ..., exprs_values="counts", dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = poisson())
 {
 
-    mat <- as.matrix(.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) #TODO: is needed for as.matrix? What with delayarray? What with offset?
+    mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) #TODO: is needed for as.matrix? What with delayarray? What with offset?
     .checkfamily(mat, family)
-
     .calculate_sgd(mat, family, transposed=!is.null(dimred), ...)
 })
 
 #' @export
 #' @rdname runSGD
-#' @importFrom SingleCellExperiment reducedDim<-
+#' @importFrom SingleCellExperiment reducedDim<- altExp
 setMethod("runSGD", "SingleCellExperiment", function(x, ..., altexp=NULL, name="SGD")
 {
     if (!is.null(altexp)) {
@@ -313,11 +317,4 @@ setMethod("runSGD", "SingleCellExperiment", function(x, ..., altexp=NULL, name="
     x
 })
 
-#' @export
-#' @rdname plot_reddim
-#' @aliases plotSGD
-#' @importFrom scater plotReducedDim
-plotSGD <- function(object, ..., ncomponents=2, dimred = "SGD")
-{
-    plotReducedDim(object, ncomponents = ncomponents, dimred = dimred, ...)
-}
+

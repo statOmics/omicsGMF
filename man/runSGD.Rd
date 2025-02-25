@@ -196,7 +196,7 @@ This section is relevant if \code{x} is a \linkS4class{SingleCellExperiment} and
 In such cases, the method is run on data from an alternative \linkS4class{SummarizedExperiment} nested within \code{x}.
 This is useful for performing dimensionality reduction on other features stored in \code{\link{altExp}(x, altexp)}, e.g., antibody tags.
 
-Setting \code{altexp} with \code{assay.type} will use the specified assay from the alternative SummarizedExperiment.
+Setting \code{altexp} with \code{assay.type} will use the specified assay from the alternative \linkS4class{SummarizedExperiment}.
 If the alternative is a SingleCellExperiment, setting \code{dimred} will use the specified dimensionality reduction results from the alternative.
 This option will also interact as expected with \code{n_dimred}.
 
@@ -206,7 +206,7 @@ It is advisable to use a different \code{name} to distinguish this output from t
 
 \examples{
 example_sce <- mockSCE()
-cv <- calculateSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
+example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
 example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
 reducedDimNames(example_sce)
 head(reducedDim(example_sce))
@@ -214,8 +214,8 @@ head(reducedDim(example_sce))
 \seealso{
 \code{\link[sgdGMF]{sgdgmf.fit}}, for the underlying calculations.
 
-\code{\link[BiocSGDGMF]{plotSGD}}, to conveniently visualize the results.
-\code{\link[BiocSGDGMF]{SGDImpute}}, to conveniently impute missing values.
+\code{\link[scSGDGMF]{plotSGD}}, to conveniently visualize the results.
+\code{\link[scSGDGMF]{SGDImpute}}, to conveniently impute missing values.
 }
 \author{
 Alexandre Segers
