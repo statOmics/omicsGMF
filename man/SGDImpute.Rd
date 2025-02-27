@@ -26,7 +26,9 @@ SGDImpute(x, ...)
 features in the rows and samples in columns.
 Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
 
-\item{sgdGMF_reducedDims}{the output obtained by \code{\link{'runSGD'}} or \code{\link{'calculateSGD'}}. If \code{x} is a
+\item{...}{For the \code{SGDImpute} generic, additional arguments to pass to specific methods.}
+
+\item{sgdGMF_reducedDims}{the output obtained by \code{\link{runSGD}} or \code{\link{calculateSGD}}. If \code{x} is a
 \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken from \code{\link{reducedDim}(x, 'SGD')}.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
@@ -47,14 +49,17 @@ Imputation is only possible after running \code{'runSGD'} using all features.
 Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
 }
 \examples{
-example_sce <- mockSCE()
+example_sce <- mockSCE(ncells = 200, ngenes = 100)
 example_sce <- logNormCounts(example_sce)
-assay(example_sce, 'logcounts')[c(1,5,10)] <- NA
-example_sce <- runSGD(example_sce, exprs_values="logcounts", family = gaussian(), ncomponents = 3)
+assay(example_sce, 'logcounts')[assay(example_sce, 'logcounts') == 0] <- NA
+example_sce <- runSGD(example_sce,
+                      exprs_values="logcounts",
+                      family = gaussian(),
+                      ncomponents = 3)
 example_sce <- SGDImpute(example_sce)
 }
 \seealso{
-\code{\link[scSGDGMF]{runSGD}}, to conveniently obtain the matrix factorization.
+\code{\link{runSGD}}, to conveniently obtain the matrix factorization.
 }
 \author{
 Alexandre Segers

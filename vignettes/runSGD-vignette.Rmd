@@ -21,7 +21,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r, echo = FALSE}
 library(knitr)
 ```
@@ -185,15 +185,15 @@ We can again perform cross-validation to estimate the optimal dimensionality of 
 
 ```{r}
 cv_proteomics <- calculateSGD_cv(example_sce, 
-                      exprs_values="logintensities", 
-                      family = gaussian(), 
-                      ncomponents = c(1:5))
+                                 exprs_values="logintensities", 
+                                 family = gaussian(), 
+                                 ncomponents = c(1:5))
 
 cv_proteomics %>% group_by(ncomp) %>% summarise(mean_dev = mean(dev),
-                                     mean_aic = mean(aic),
-                                     mean_bic = mean(bic),
-                                     mean_mae = mean(mae),
-                                     mean_mse = mean(mse))
+                                                mean_aic = mean(aic),
+                                                mean_bic = mean(bic),
+                                                mean_mae = mean(mae),
+                                                mean_mse = mean(mse))
 ```
 
 After choosing which number of components to use in the final dimensionality
@@ -224,10 +224,17 @@ head(reducedDim(example_sce, type = "SGD_logintensities"))
 Also, it is possible to impute the missing values with the mean estimates. This can be done with the `SGDImpute` function:
 
 ```{r}
-example_sce <- SGDImpute(example_sce, reducedDimName = "SGD_logintensities", exprs_values = "logintensities")
+example_sce <- SGDImpute(example_sce, 
+                         reducedDimName = "SGD_logintensities", 
+                         exprs_values = "logintensities")
 
 
 assay(example_sce,'logintensities')[1:5,1:5]
 assay(example_sce,'logintensities_imputed')[1:5,1:5]
+```
+
+
+```{r}
+sessionInfo()
 ```
 

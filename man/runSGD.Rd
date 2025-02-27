@@ -6,13 +6,10 @@
 \alias{calculateSGD,ANY-method}
 \alias{calculateSGD,SummarizedExperiment-method}
 \alias{calculateSGD,SingleCellExperiment-method}
-\alias{runSGD,SingleCellExperiment-method}
 \title{Perform a stochastic gradient descent generalized matrix factorization (sgdGMF) on cells,
 based on the expression or mass spectrometry data in a SingleCellExperiment object.}
 \usage{
 calculateSGD(x, ...)
-
-runSGD(x, ...)
 
 \S4method{calculateSGD}{ANY}(
   x,
@@ -55,7 +52,7 @@ runSGD(x, ...)
   family = poisson()
 )
 
-\S4method{runSGD}{SingleCellExperiment}(x, ..., altexp = NULL, name = "SGD")
+runSGD(x, ..., altexp = NULL, name = "SGD")
 }
 \arguments{
 \item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
@@ -205,9 +202,15 @@ It is advisable to use a different \code{name} to distinguish this output from t
 }
 
 \examples{
-example_sce <- mockSCE()
-example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
-example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
+example_sce <- mockSCE(ncells = 200, ngenes = 100)
+example_sce <- runSGD_cv(example_sce,
+                         exprs_values="counts",
+                         family = poisson(),
+                         ncomponents = c(1:5))
+example_sce <- runSGD(example_sce,
+                      exprs_values="counts",
+                      family = poisson(),
+                      ncomponents = 3)
 reducedDimNames(example_sce)
 head(reducedDim(example_sce))
 }

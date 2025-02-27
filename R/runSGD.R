@@ -120,9 +120,15 @@
 #' @author Alexandre Segers
 #'
 #' @examples
-#' example_sce <- mockSCE()
-#' example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
-#' example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
+#' example_sce <- mockSCE(ncells = 200, ngenes = 100)
+#' example_sce <- runSGD_cv(example_sce,
+#'                          exprs_values="counts",
+#'                          family = poisson(),
+#'                          ncomponents = c(1:5))
+#' example_sce <- runSGD(example_sce,
+#'                       exprs_values="counts",
+#'                       family = poisson(),
+#'                       ncomponents = 3)
 #' reducedDimNames(example_sce)
 #' head(reducedDim(example_sce))
 NULL
@@ -163,14 +169,14 @@ NULL
         out <- .get_mat_for_reddim(x, subset_row=subset_row, ntop=ntop, scale=scale, get.var=TRUE, family = family)
 
         if(!is.null(Z)){
-            Z <- Z[c(rownames(x)) %in% colnames(out$x),, drop = F]
+            Z <- Z[c(rownames(x)) %in% colnames(out$x),, drop = FALSE]
         }
 
         if(!is.null(offset)){
             if(all(dim(offset) == dim(x))){
-                offset <- t(offset[c(rownames(x)) %in% colnames(out$x),, drop = F])
+                offset <- t(offset[c(rownames(x)) %in% colnames(out$x),, drop = FALSE])
             } else if(all(dim(offset) == dim(t(x)))){
-                offset <- offset[,c(rownames(x)) %in% colnames(out$x), drop = F]
+                offset <- offset[,c(rownames(x)) %in% colnames(out$x), drop = FALSE]
             } else{
                 stop("Offset does not have equal dimensions as the assay used.")
             }
@@ -178,9 +184,9 @@ NULL
 
         if(!is.null(weights)){
             if(all(dim(weights) == dim(x))){
-                weights <- t(weights[c(rownames(x)) %in% colnames(out$x),, drop = F])
+                weights <- t(weights[c(rownames(x)) %in% colnames(out$x),, drop = FALSE])
             } else if(all(dim(weights) == dim(t(x)))){
-                weights <- weights[,c(rownames(x)) %in% colnames(out$x), drop = F]
+                weights <- weights[,c(rownames(x)) %in% colnames(out$x), drop = FALSE]
             } else{
                 stop("Weights does not have equal dimensions as the assay used.")
             }
@@ -192,11 +198,15 @@ NULL
         cv <- colVars(DelayedArray(x), useNames = TRUE)
     }
 
-    control.init = do.call(".set.control.init", control.init)
+    control.init <- do.call(".set.control.init", control.init)
 
 
-    if (method == "sgd" & sampling == "block") control.alg = do.call(".set.control.bsgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
-    if (method == "sgd" & sampling == "coord") control.alg = do.call(".set.control.csgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+    if (method == "sgd" & sampling == "block") control.alg <-
+        do.call(".set.control.bsgd",
+                append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+    if (method == "sgd" & sampling == "coord") control.alg <-
+        do.call(".set.control.csgd",
+                append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
 
     # if (method == "airwls") control.alg = do.call("set.control.airwls", control.alg)
     # if (method == "newton") control.alg = do.call("set.control.newton", control.alg)
@@ -204,7 +214,7 @@ NULL
     # if (method == "rsgd") control.alg = do.call("set.control.rsgd", control.alg)
 
     if(crossval){
-        control.cv = do.call(sgdGMF::set.control.cv, control.cv)
+        control.cv <- do.call(sgdGMF::set.control.cv, control.cv)
 
         if(length(ncomponents) <= 1) stop("Cross-validation cannot be performed using a single grid search value. Change crossval to FALSE or include a vector of different values.")
         if(control.cv$refit != TRUE) stop("calculateSGD and runSGD can only be ran with refit == TRUE. use calculateSGD_cv if you want to return only the cross-validation results, or choose the number of components by yourself.")
@@ -306,7 +316,7 @@ setMethod("calculateSGD", "SingleCellExperiment", function(x, ..., exprs_values=
 #' @export
 #' @rdname runSGD
 #' @importFrom SingleCellExperiment reducedDim<- altExp
-setMethod("runSGD", "SingleCellExperiment", function(x, ..., altexp=NULL, name="SGD")
+runSGD <-  function(x, ..., altexp=NULL, name="SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
@@ -315,6 +325,6 @@ setMethod("runSGD", "SingleCellExperiment", function(x, ..., altexp=NULL, name="
     }
     reducedDim(x, name) <- calculateSGD(y, ...)
     x
-})
+}
 
 

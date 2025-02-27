@@ -174,7 +174,7 @@
     ctr$progress = FALSE
 
     message = function (var)
-        warning(paste0("B-SGD control: '", var,"' was set to default value."),
+        warning(paste0("C-SGD control: '", var,"' was set to default value."),
                 call. = FALSE, immediate. = TRUE, domain = NULL)
 
     # Standard safety checks

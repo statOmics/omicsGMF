@@ -6,14 +6,10 @@
 \alias{calculateSGD_cv,ANY-method}
 \alias{calculateSGD_cv,SummarizedExperiment-method}
 \alias{calculateSGD_cv,SingleCellExperiment-method}
-\alias{runSGD_cv,SummarizedExperiment-method}
-\alias{runSGD_cv,SingleCellExperiment-method}
 \title{Perform a stochastic gradient descent generalized matrix factorization (sgdGMF) on cells,
 based on the expression or mass spectrometry data in a SingleCellExperiment object.}
 \usage{
 calculateSGD_cv(x, ...)
-
-runSGD_cv(x, ...)
 
 \S4method{calculateSGD_cv}{ANY}(
   x,
@@ -55,9 +51,7 @@ runSGD_cv(x, ...)
   family = poisson()
 )
 
-\S4method{runSGD_cv}{SummarizedExperiment}(x, ..., name = "cv_SGD")
-
-\S4method{runSGD_cv}{SingleCellExperiment}(x, ..., altexp = NULL, name = "cv_SGD")
+runSGD_cv(x, ..., altexp = NULL, name = "cv_SGD")
 }
 \arguments{
 \item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
@@ -119,9 +113,9 @@ not specified, parallelization is enabled with nthreads = BPPARAM$workers.}
 
 \item{n_dimred}{Integer scalar or vector specifying the dimensions to use if \code{dimred} is specified.}
 
-\item{name}{String specifying the name to be used to store the result in the \code{\link{reducedDims}} of the output.}
-
 \item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
+
+\item{name}{String specifying the name to be used to store the result in the \code{\link{reducedDims}} of the output.}
 }
 \value{
 A table containing the summary statistics of the cross-validation. If a
@@ -158,10 +152,16 @@ This will also remove features with standard deviations below 1e-8.
 }
 
 \examples{
-example_sce <- mockSCE()
-example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
+example_sce <- mockSCE(ncells = 200, ngenes = 100)
+example_sce <- runSGD_cv(example_sce,
+                         exprs_values="counts",
+                         family = poisson(),
+                         ncomponents = c(1:5))
 head(metadata(example_sce)[["SGD"]])
-example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
+example_sce <- runSGD(example_sce,
+                      exprs_values="counts",
+                      family = poisson(),
+                      ncomponents = 3)
 reducedDimNames(example_sce)
 head(reducedDim(example_sce))
 }

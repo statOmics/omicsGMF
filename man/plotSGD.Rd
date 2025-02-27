@@ -29,9 +29,15 @@ This is a wrapper around \code{\link{plotReducedDim}} that uses the "SGD" slot f
 \code{\link{reducedDims}} to obtain a dimensionality reduction plot.
 }
 \examples{
-example_sce <- mockSCE()
-example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
-example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
+example_sce <- mockSCE(ncells = 200, ngenes = 100)
+example_sce <- runSGD_cv(example_sce,
+                         exprs_values="counts",
+                         family = poisson(),
+                         ncomponents = c(1:5))
+example_sce <- runSGD(example_sce,
+                      exprs_values="counts",
+                      family = poisson(),
+                      ncomponents = 3)
 plotSGD(example_sce)
 }
 \seealso{

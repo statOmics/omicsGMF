@@ -75,10 +75,16 @@
 #' @author Alexandre Segers
 #'
 #' @examples
-#' example_sce <- mockSCE()
-#' example_sce <- runSGD_cv(example_sce, exprs_values="counts", family = poisson(), ncomponents = c(1:5))
+#' example_sce <- mockSCE(ncells = 200, ngenes = 100)
+#' example_sce <- runSGD_cv(example_sce,
+#'                          exprs_values="counts",
+#'                          family = poisson(),
+#'                          ncomponents = c(1:5))
 #' head(metadata(example_sce)[["SGD"]])
-#' example_sce <- runSGD(example_sce, exprs_values="counts", family = poisson(), ncomponents = 3)
+#' example_sce <- runSGD(example_sce,
+#'                       exprs_values="counts",
+#'                       family = poisson(),
+#'                       ncomponents = 3)
 #' reducedDimNames(example_sce)
 #' head(reducedDim(example_sce))
 
@@ -114,13 +120,13 @@ NULL
   if (!transposed) {
     out <- .get_mat_for_reddim(x, subset_row=subset_row, ntop=ntop, scale=scale, get.var=TRUE, family = family)
     if(!is.null(Z)){
-        Z <- Z[c(rownames(x)) %in% colnames(out$x),, drop = F]
+        Z <- Z[c(rownames(x)) %in% colnames(out$x),, drop = FALSE]
     }
     if(!is.null(offset)){
         if(all(dim(offset) == dim(x))){
-        offset <- t(offset[c(rownames(x)) %in% colnames(out$x),, drop = F])
+        offset <- t(offset[c(rownames(x)) %in% colnames(out$x),, drop = FALSE])
         } else if(all(dim(offset) == dim(t(x)))){
-            offset <- offset[,c(rownames(x)) %in% colnames(out$x), drop = F]
+            offset <- offset[,c(rownames(x)) %in% colnames(out$x), drop = FALSE]
         } else{
             stop("Offset does not have equal dimensions compared to the assay used.")
         }
@@ -128,9 +134,9 @@ NULL
 
     if(!is.null(weights)){
         if(all(dim(weights) == dim(x))){
-            weights <- t(weights[c(rownames(x)) %in% colnames(out$x),, drop = F])
+            weights <- t(weights[c(rownames(x)) %in% colnames(out$x),, drop = FALSE])
         } else if(all(dim(weights) == dim(t(x)))){
-            weights <- weights[,c(rownames(x)) %in% colnames(out$x), drop = F]
+            weights <- weights[,c(rownames(x)) %in% colnames(out$x), drop = FALSE]
         } else{
             stop("Weights does not have equal dimensions compared to the assay used.")
         }
@@ -141,9 +147,15 @@ NULL
     cv <- colVars(DelayedArray(x), useNames = TRUE)
   }
 
-  control.init = do.call(".set.control.init", control.init)
+  control.init <- do.call(".set.control.init", control.init)
 
-  if (method == "sgd" & sampling == "block") control.alg = do.call(".set.control.bsgd", append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+  if (method == "sgd" & sampling == "block") control.alg <-
+      do.call(".set.control.bsgd",
+              append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
+
+  if (method == "sgd" & sampling == "coord") control.alg <-
+      do.call(".set.control.csgd",
+              append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
 
   if(BPPARAM$workers > 1 & is.null(control.cv$parallel) & is.null(control.cv$nthreads)){
       control.cv$parallel <- TRUE
@@ -151,7 +163,7 @@ NULL
 
   }
 
-  control.cv = do.call(sgdGMF::set.control.cv, control.cv)
+  control.cv <- do.call(sgdGMF::set.control.cv, control.cv)
   control.cv$refit <- FALSE
 
 
@@ -206,26 +218,17 @@ setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_valu
 
 #' @export
 #' @rdname runSGD_cv
-#' @importFrom SummarizedExperiment metadata<-
-setMethod("runSGD_cv", "SummarizedExperiment", function(x, ..., name = "cv_SGD")
-{
-    metadata(x)[[name]] <- calculateSGD_cv(x, ...)
-    x
-})
-
-#' @export
-#' @rdname runSGD_cv
-#' @importFrom SummarizedExperiment metadata<-
+#' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-setMethod("runSGD_cv", "SingleCellExperiment", function(x, ..., altexp = NULL, name = "cv_SGD")
+runSGD_cv <-  function(x, ..., altexp = NULL, name = "cv_SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
         y <- x
     }
-    metadata(x)[[name]] <- calculateSGD_cv(x, ...)
+    S4Vectors::metadata(x)[[name]] <- calculateSGD_cv(x, ...)
     x
-})
+}
 
 
