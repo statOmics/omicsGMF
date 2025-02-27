@@ -45,7 +45,7 @@ A SingleCellExperiment object is returned with an extra assay containing the imp
 Impute missing values based on the results of runSGD.
 }
 \details{
-Imputation is only possible after running \code{'runSGD'} using all features.
+Imputation is only possible after running \code{runSGD} using all features.
 Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
 }
 \examples{

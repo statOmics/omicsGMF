@@ -11,7 +11,7 @@ scSGDGMF is a Bioconductor wrapper for the sgdGMF \code{\link{sgdGMF}} package, 
 \seealso{
 Useful links:
 \itemize{
-  \item \url{tps://github.com/statOmics/scSGDGMF}
+  \item \url{https://github.com/statOmics/scSGDGMF}
   \item Report bugs at \url{https://github.com/statOmics/scSGDGMF/issues}
 }
 

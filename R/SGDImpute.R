@@ -12,7 +12,7 @@
 #' @param ... For the \code{SGDImpute} generic, additional arguments to pass to specific methods.
 #'
 #' @details
-#' Imputation is only possible after running \code{'runSGD'} using all features.
+#' Imputation is only possible after running \code{runSGD} using all features.
 #' Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
 #'
 #' @return
