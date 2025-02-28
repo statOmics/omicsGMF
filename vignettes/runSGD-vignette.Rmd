@@ -53,7 +53,10 @@ optimization algorithms. In total, there are four main functions:
 
 1. `calculateSGD_cv` performs cross-validation to determine the optimal number
 of latent confounders. This avoids arbitrarily choosing `ncomponents`, but
-requires some computational time.
+requires some computational time. An alternative is `calculateSGD_rank`, which
+performs an eigenvalue decomposition on the deviance residuals. This allows for
+model selection based on a scree plot using `screeplot_rank`, for example using
+the elbow method.
 
 2. `runSGD` or `calculateSGD` estimates the latent confounders and the rotation
 matrix, and estimates the respective parameters of the sample-level and 
@@ -70,12 +73,12 @@ a standard workflow on proteomics data.
 
 # Package installation
 
-`sgdGMF` can currently be installed through GitHub.
+`sgdGMF` can be installed through CRAN.
 `scSGDGMF` can be installed from Bioconductor with:
 
 ```{r, eval=FALSE}
 if(!requireNamespace("sgdGMF", quietly = TRUE))
-    install("sgdGMF")
+    install.packages("sgdGMF")
 
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -84,7 +87,7 @@ BiocManager::install("scSGDGMF")
 ```
 
 
-```{r, echo = FALSE}
+```{r, echo = TRUE, warning=FALSE, message=FALSE}
 library(sgdGMF)
 library(scSGDGMF)
 library(dplyr)
@@ -133,6 +136,27 @@ cv %>% group_by(ncomp) %>% summarise(mean_dev = mean(dev),
                                      mean_mae = mean(mae),
                                      mean_mse = mean(mse))
 ```
+
+If data are very large, or when having no idea which range of cross-validation 
+values to explore, one can also use a scree plot of the eigenvalues for model
+selection. This approach uses PCA on the deviance residuals to obtain the
+eigenvalues, which is an approximation to the real matrix factorization.
+This can be done using`runSGD_rank` or `calculateSGD_rank` followed
+by `plotSGD_rank` or `screeplot_rank` respectively. Note that now, the 
+`maxcomp` parameter should be defined, which is the number of 
+eigenvalues computed.
+
+```{r}
+rank <- calculateSGD_rank(example_sce, 
+                      exprs_values="counts", 
+                      family = poisson(), 
+                      maxcomp = 10,
+                      ntop = 500)
+
+screeplot_rank(rank,maxcomp = 10)
+```
+
+
 
 After choosing which number of components to use in the final dimensionality
 reduction, `runSGD` or `calculateSGD` can be used. Again, one should select the
@@ -194,6 +218,22 @@ cv_proteomics %>% group_by(ncomp) %>% summarise(mean_dev = mean(dev),
                                                 mean_bic = mean(bic),
                                                 mean_mae = mean(mae),
                                                 mean_mse = mean(mse))
+```
+
+
+Again, we can choose to use a scree plot for model selection, calculating the
+eigenvalues with PCA on the deviance residuals. Note that missing values are 
+imputed here with the feature means. Therefore, when dealing with many missing
+values, using a scree plot for model selection might not be optimal, but 
+however remains a fast alternative to cross-validation.
+
+```{r}
+rank_proteomics <- calculateSGD_rank(example_sce, 
+                      exprs_values="logintensities", 
+                      family = gaussian(),
+                      maxcomp = 10)
+
+screeplot_rank(rank_proteomics, maxcomp = 10)
 ```
 
 After choosing which number of components to use in the final dimensionality

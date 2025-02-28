@@ -14,7 +14,7 @@
 #' \code{\link{reducedDims}} to obtain a dimensionality reduction plot.
 #'
 #' @return
-#' a \link{ggplot} object.
+#' A \link{ggplot} object.
 #' @name plotSGD
 #' @seealso
 #' \code{\link{plotReducedDim}}, for the underlying calculations.

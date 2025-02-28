@@ -18,7 +18,7 @@ see \link{plotReducedDim} for details}
 \item{dimred}{A string or integer scalar indicating the reduced dimension result in \code{\link{reducedDims}}(object) to plot.}
 }
 \value{
-a \link{ggplot} object.
+A \link{ggplot} object.
 }
 \description{
 Wrapper functions to create plots for specific types of reduced dimension results in a SingleCellExperiment object,

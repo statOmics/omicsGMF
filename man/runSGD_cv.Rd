@@ -157,7 +157,7 @@ example_sce <- runSGD_cv(example_sce,
                          exprs_values="counts",
                          family = poisson(),
                          ncomponents = c(1:5))
-head(metadata(example_sce)[["SGD"]])
+head(metadata(example_sce)[["cv_SGD"]])
 example_sce <- runSGD(example_sce,
                       exprs_values="counts",
                       family = poisson(),
