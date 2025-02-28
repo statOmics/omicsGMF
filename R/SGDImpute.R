@@ -1,22 +1,38 @@
 #' Impute missing values based on the results of runSGD.
 #'
-#' @param x a numeric matrix of expression counts or mass spectrometry intensities containing missing values and with
-#' features in the rows and samples in columns.
-#' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' @param reducedDimName the name of the \code{\link{reducedDim}} slot corresponding to the dimensionality reduction
-#' obtained with runSGD when \code{x} is a \linkS4class{SingleCellExperiment}.
-#' @param sgdGMF_reducedDims the output obtained by \code{\link{runSGD}} or \code{\link{calculateSGD}}. If \code{x} is a
-#' \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken from \code{\link{reducedDim}(x, 'SGD')}.
-#' @param assay.type Integer scalar or string indicating which assay of \code{x} contains the values of interest.
+#' @param x a numeric matrix of expression counts or mass spectrometry
+#' intensities containing missing values and with features in the rows and
+#' samples in columns.
+#'
+#' Alternatively, a \linkS4class{SummarizedExperiment},
+#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+#' containing such a matrix.
+#' @param reducedDimName the name of the \code{\link{reducedDim}} slot
+#' corresponding to the dimensionality reduction obtained with runSGD when
+#' \code{x} is a \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}
+#' object.
+#' @param sgdGMF_reducedDims the output obtained by \code{\link{runSGD}} or
+#' \code{\link{calculateSGD}}. If \code{x} is a
+#' \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken
+#' from \code{\link{reducedDim}(x, reducedDimName)}.
+#' @param assay.type Integer scalar or string indicating which assay of
+#' \code{x} contains the values of interest.
 #' @param exprs_values Alias to \code{assay.type}.
-#' @param ... For the \code{SGDImpute} generic, additional arguments to pass to specific methods.
+#' @param name New assay name included for the matrix with imputed values.
+#' @param ... For the \code{SGDImpute} generic, additional arguments to
+#' pass to specific methods.
 #'
 #' @details
 #' Imputation is only possible after running \code{runSGD} using all features.
-#' Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
+#' Therefore, \code{subset_row} or \code{ntop} should be set to NULL when
+#' performing the matrix factorization.
 #'
 #' @return
-#' A SingleCellExperiment object is returned with an extra assay containing the imputed values.
+#' For \linkS4class{SummarizedExperiment},
+#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}, a similar
+#' object now containing an extra assay with the imputed values.
+#'
+#' For a matrix, a matrix with missing values imputed.
 #'
 #' @name SGDImpute
 #' @seealso
@@ -69,16 +85,18 @@ setMethod("SGDImpute", "ANY", .imputeMissingValues)
 #' @importFrom SummarizedExperiment assay assay<-
 setMethod("SGDImpute", "SummarizedExperiment", function(x, sgdGMF_reducedDims,
                                                         exprs_values=1,
-                                                        assay.type=exprs_values)
+                                                        assay.type=exprs_values,
+                                                        name = "imputedAssay")
 {
   if(is.null(sgdGMF_reducedDims)){
     stop("first run 'runSGD' to obtain estimations for Imputation")
   }
   if(nrow(attr(sgdGMF_reducedDims,'rotation')) != nrow(x)){
-      stop("all features should be used when performing 'runSGD' if imputation is wanted.")
+      stop("all features should be used when performing 'runSGD' if
+           imputation is wanted.")
   }
 
-  assay(x, paste0(assay.type, '_imputed')) <-  .imputeMissingValues(assay(x, assay.type), sgdGMF_reducedDims)
+  assay(x, name) <-  .imputeMissingValues(assay(x, assay.type), sgdGMF_reducedDims)
   x
 })
 
@@ -89,16 +107,51 @@ setMethod("SGDImpute", "SingleCellExperiment", function(x,
                                                         reducedDimName = "SGD",
                                                         sgdGMF_reducedDims = reducedDim(x, reducedDimName),
                                                         exprs_values=1,
-                                                        assay.type=exprs_values)
+                                                        assay.type=exprs_values,
+                                                        name = "imputedAssay")
 {
   if(is.null(sgdGMF_reducedDims)){
     stop("first run 'runSGD' to obtain estimations for Imputation")
   }
   if(nrow(attr(sgdGMF_reducedDims, 'rotation')) != nrow(x)){
-        stop("all features should be used when performing 'runSGD' if imputation is wanted.")
+        stop("all features should be used when performing 'runSGD' if
+             imputation is wanted.")
   }
 
-  assay(x, paste0(assay.type, '_imputed')) <- .imputeMissingValues(assay(x, assay.type), sgdGMF_reducedDims)
+  assay(x, name) <- .imputeMissingValues(assay(x, assay.type), sgdGMF_reducedDims)
   x
+
+})
+
+
+#' @export
+#' @rdname SGDImpute
+#' @importFrom SummarizedExperiment assay assay<-
+setMethod("SGDImpute", "QFeatures", function(x,
+                                             ...,
+                                             reducedDimName = "SGD",
+                                             exprs_values=NULL,
+                                             assay.type=NULL,
+                                             name = "imputedAssay")
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+
+    if(class(x[[assay.type]]) != "SingleCellExperiment"){
+        stop("First run runSGD on the appropriate assay.")
+    }
+
+    imputedValues <- .imputeMissingValues(assay(x[[assay.type]], 1),
+                                          sgdGMF_reducedDims = reducedDim(x[[assay.type]], reducedDimName))
+    newAssay <- x[[assay.type]]
+    assay(newAssay) <- imputedValues
+    x[[name]] <- newAssay
+    x
+
 
 })

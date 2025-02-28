@@ -252,7 +252,7 @@ NULL
                                   sampling = sampling,
                                   penalty = penalty,
                                   control.init = control.init,
-                                  control.alg = control.alg) # TODO maybe include , BPPARAM=BPPARAM, of dit toevoegen aan control.init en control.alg -> BPPARAM$workers aan nthreads zodra implemented
+                                  control.alg = control.alg)
 
         # Perform PCA to put all information in U instead of V
         orth_sgd <- BiocSingular::runPCA(sgd$U %*% t(sgd$V),
@@ -263,14 +263,11 @@ NULL
 
     }
 
-    varExplained <- orth_sgd$sdev^2 #TODO: not rightwhen non gaussian? Also not right when including covariates? remove?
-    percentVar <- varExplained / sum(cv) * 100# TODO: not right when non gaussian? Also not right when including covariates?  remove?
+
 
     # Saving the results
     pcs <- orth_sgd$x
     rownames(pcs) <- rownames(x)
-    attr(pcs, "varExplained") <- varExplained
-    attr(pcs, "percentVar") <- percentVar
     rownames(orth_sgd$rotation) <- colnames(x)
     attr(pcs, "rotation") <- orth_sgd$rotation
     attr(pcs, "X") <- sgd$X
@@ -314,10 +311,12 @@ setMethod("calculateSGD", "SingleCellExperiment", function(x, ..., exprs_values=
     .calculate_sgd(mat, family, transposed=!is.null(dimred), ...)
 })
 
+
+
 #' @export
 #' @rdname runSGD
 #' @importFrom SingleCellExperiment reducedDim<- altExp
-runSGD <-  function(x, ..., altexp=NULL, name="SGD")
+.runSGD <-  function(x, ..., altexp=NULL, name="SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
@@ -327,5 +326,44 @@ runSGD <-  function(x, ..., altexp=NULL, name="SGD")
     reducedDim(x, name) <- calculateSGD(y, ...)
     x
 }
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD", "SummarizedExperiment", function(x, ...)
+{
+    warning("runSGD is only compatible with SingleCellExperiment. Therefore
+            the SummarizedExperiment is changed to a SingleCellExperiment.")
+
+    .runSGD(as(x, "SingleCellExperiment"), ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD", "SingleCellExperiment", function(x, ...)
+{
+    .runSGD(x, ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD", "QFeatures", function(x, ...,
+                                          exprs_values = NULL,
+                                          assay.type = NULL)
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+    x[[assay.type]] <- runSGD(x[[assay.type]], ...)
+    x
+})
+
+
+
+
 
 

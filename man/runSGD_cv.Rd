@@ -6,14 +6,17 @@
 \alias{calculateSGD_cv,ANY-method}
 \alias{calculateSGD_cv,SummarizedExperiment-method}
 \alias{calculateSGD_cv,SingleCellExperiment-method}
+\alias{.runSGD_cv}
 \title{Perform a stochastic gradient descent generalized matrix factorization (sgdGMF) on cells,
 based on the expression or mass spectrometry data in a SingleCellExperiment object.}
 \usage{
 calculateSGD_cv(x, ...)
 
+runSGD_cv(x, ...)
+
 \S4method{calculateSGD_cv}{ANY}(
   x,
-  family = poisson(),
+  family = gaussian(),
   ncomponents = 1:10,
   ntop = NULL,
   X = NULL,
@@ -36,22 +39,22 @@ calculateSGD_cv(x, ...)
 \S4method{calculateSGD_cv}{SummarizedExperiment}(
   x,
   ...,
-  exprs_values = "counts",
+  exprs_values = 1,
   assay.type = exprs_values,
-  family = poisson()
+  family = gaussian()
 )
 
 \S4method{calculateSGD_cv}{SingleCellExperiment}(
   x,
   ...,
-  exprs_values = "counts",
+  exprs_values = 1,
   dimred = NULL,
   n_dimred = NULL,
   assay.type = exprs_values,
-  family = poisson()
+  family = gaussian()
 )
 
-runSGD_cv(x, ..., altexp = NULL, name = "cv_SGD")
+.runSGD_cv(x, ..., altexp = NULL, name = "cv_SGD")
 }
 \arguments{
 \item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
@@ -75,7 +78,8 @@ Default uses all features.}
 
 \item{Z}{Feature-level covariate matrix. Defaults to column of ones.}
 
-\item{offset}{offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(), this should therefore be on the log-scale}
+\item{offset}{offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(),
+this should therefore be on the log-scale}
 
 \item{weights}{weight matrix with same dimensions as x that determines the weight of each observation.}
 

@@ -2,9 +2,9 @@
     if (!all(mat == floor(mat)) & family$family %in% c("poisson", "nb", "negbin")){
         warning("Family is poisson or negative binomial, while assay is not full of integers. Consider changing the assay used or changing the family to gaussian()")
     }
-    if (all(mat == floor(mat)) & family$family == "gaussian"){
-        warning("Family is gaussian, while assay is full of integers. Consider using poisson() or other families.")
-    }
+    # if (all(mat == floor(mat)) & family$family == "gaussian"){
+    #     warning("Family is gaussian, while assay is full of integers. Consider using poisson() or other families.")
+    # }
 }
 
 # Set the control parameters of the initialization to the default for omics data.

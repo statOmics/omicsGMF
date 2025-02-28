@@ -1,44 +1,71 @@
 #' Perform an eigendecomposition for model selection based on a screeplot.
 #'
-#' @param x For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
-#' rows are features and columns are cells.
-#' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' For \code{runSGD}, a \linkS4class{SingleCellExperiment} object containing such a matrix.
-#' @param maxcomp Scalar indicating the maximal number of eigenvalues to compute.
+#' @param x For \code{calculateSGD}, a numeric matrix of expression counts or
+#' mass spectrometry intensities where rows are features and columns are cells.
+#' Alternatively, a \linkS4class{SummarizedExperiment} or
+#' \linkS4class{SingleCellExperiment} containing such a matrix.
+#'
+#' For \code{runSGD}, a \linkS4class{SummarizedExperiment},
+#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+#' containing such a matrix.
+#' @param maxcomp Scalar indicating the maximal number of eigenvalues to
+#' compute.
 #' @param X Sample-level covariate matrix. Defaults to column of ones.
 #' @param Z Feature-level covariate matrix. Defaults to column of ones.
-#' @param family The distribution family that is used for the estimation of the parameters.
-#' @param offset offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(),
+#' @param family The distribution family that is used for the estimation of
+#' the parameters.
+#' @param offset offset matrix with same dimensions as x that is added to the
+#' linear predictor. Note that if family = poisson(),
 #' this should therefore be on the log-scale
-#' @param weights weight matrix with same dimensions as x that determines the weight of each observation.
-#' @param ntop Numeric scalar specifying the number of features with the highest variances to use for dimensionality reduction.
+#' @param weights weight matrix with same dimensions as x that determines the
+#' weight of each observation.
+#' @param ntop Numeric scalar specifying the number of features with the
+#' highest variances to use for dimensionality reduction.
 #' Default uses all features.
-#' @param subset_row Vector specifying the subset of features to use for dimensionality reduction.
-#' This can be a character vector of row names, an integer vector of row indices or a logical vector.
-#' @param assay.type Integer scalar or string indicating which assay of \code{x} contains the values of interest.
-#' @param scale Logical scalar, should the expression values be standardized? Not recommended for non-Gaussian data.
-#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which algorithm should be used to perform the PCA.
-#' This is used in \code{runPCA} to put all information in the sample latent factors.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether the cross-validation
-#' should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and control.cv$nthreads are
+#' @param subset_row Vector specifying the subset of features to use for
+#' dimensionality reduction.
+#' This can be a character vector of row names, an integer vector of row
+#' indices or a logical vector.
+#' @param assay.type Integer scalar or string indicating which assay of
+#' \code{x} contains the values of interest.
+#' @param scale Logical scalar, should the expression values be standardized?
+#' Not recommended for non-Gaussian data.
+#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which
+#' algorithm should be used to perform the PCA.
+#' This is used in \code{runPCA} to put all information in the sample
+#' latent factors.
+#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether
+#' the cross-validation
+#' should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and
+#' control.cv$nthreads are
 #' not specified, parallelization is enabled with nthreads = BPPARAM$workers.
-#' @param altexp String or integer scalar specifying an alternative experiment containing the input data.
-#' @param dimred String or integer scalar specifying the existing dimensionality reduction results to use.
-#' @param n_dimred Integer scalar or vector specifying the dimensions to use if \code{dimred} is specified.
+#' @param altexp String or integer scalar specifying an alternative experiment
+#' containing the input data.
+#' @param dimred String or integer scalar specifying the existing
+#' dimensionality reduction results to use.
+#' @param n_dimred Integer scalar or vector specifying the dimensions to use
+#' if \code{dimred} is specified.
 #' @param exprs_values Alias to \code{assay.type}.
-#' @param ... For the \code{calculateSGD} generic, additional arguments to pass to specific methods such as \link{sgdgmf.rank}.
-#' For the SummarizedExperiment and SingleCellExperiment methods, additional arguments to pass to the ANY method.
+#' @param ... For the \code{calculateSGD} generic, additional arguments to
+#' pass to specific methods such as \link{sgdgmf.rank}.
+#' For the SummarizedExperiment and SingleCellExperiment methods, additional
+#' arguments to pass to the ANY method.
 #'
 #' For \code{runSGD}, additional arguments to pass to \code{calculateSGD}.
-#' @param name String specifying the name to be used to store the result in the \code{\link{metadata}} of the output.
+#' @param name String specifying the name to be used to store the result in
+#' the \code{\link{metadata}} of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
 #' @param method rank selection method, see \link{sgdgmf.rank}.
 #' @param normalize if TRUE, standardize the residual matrix for each feature.
 #' @details
-#' sgdGMF uses sampling of the data to estimate the parameters, which can alter with different seeds. Also, cross-validation
-#' puts a random selection of values to missing. This means that the result will change slightly across different runs.
-#' For full reproducibility, users should call \code{\link{set.seed}} prior to running \code{runSGD} with such algorithms.
-#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses approximate algorithms by default.)
+#' sgdGMF uses sampling of the data to estimate the parameters, which can
+#' alter with different seeds. Also, cross-validation
+#' puts a random selection of values to missing. This means that the result
+#' will change slightly across different runs.
+#' For full reproducibility, users should call \code{\link{set.seed}} prior to
+#' running \code{runSGD} with such algorithms.
+#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
+#' approximate algorithms by default.)
 #'
 #' @section Feature selection:
 #' This section is relevant if \code{x} is a numeric matrix with features in rows and cells in columns;
@@ -186,7 +213,7 @@ setMethod("calculateSGD_rank", "SingleCellExperiment", function(x, ..., exprs_va
 #' @rdname runSGD_rank
 #' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-runSGD_rank <-  function(x, ..., altexp = NULL, name = "rank_SGD")
+.runSGD_rank <-  function(x, ..., altexp = NULL, name = "rank_SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
@@ -198,4 +225,41 @@ runSGD_rank <-  function(x, ..., altexp = NULL, name = "rank_SGD")
 }
 
 
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_rank", "SummarizedExperiment", function(x, ...)
+{
+    warning("runSGD_rank is only compatible with SingleCellExperiment.
+            Thereforethe SummarizedExperiment is changed to a
+            SingleCellExperiment.")
+
+    .runSGD_rank(as(x, "SingleCellExperiment"), ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_rank", "SingleCellExperiment", function(x, ...)
+{
+    .runSGD_rank(x, ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_rank", "QFeatures", function(x, ...,
+                                             exprs_values = NULL,
+                                             assay.type = NULL)
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+    x[[assay.type]] <- runSGD_rank(x[[assay.type]], ...)
+    x
+})
 

@@ -5,48 +5,82 @@
 \alias{SGDImpute,ANY-method}
 \alias{SGDImpute,SummarizedExperiment-method}
 \alias{SGDImpute,SingleCellExperiment-method}
+\alias{SGDImpute,QFeatures-method}
 \title{Impute missing values based on the results of runSGD.}
 \usage{
 SGDImpute(x, ...)
 
 \S4method{SGDImpute}{ANY}(x, sgdGMF_reducedDims)
 
-\S4method{SGDImpute}{SummarizedExperiment}(x, sgdGMF_reducedDims, exprs_values = 1, assay.type = exprs_values)
+\S4method{SGDImpute}{SummarizedExperiment}(
+  x,
+  sgdGMF_reducedDims,
+  exprs_values = 1,
+  assay.type = exprs_values,
+  name = "imputedAssay"
+)
 
 \S4method{SGDImpute}{SingleCellExperiment}(
   x,
   reducedDimName = "SGD",
   sgdGMF_reducedDims = reducedDim(x, reducedDimName),
   exprs_values = 1,
-  assay.type = exprs_values
+  assay.type = exprs_values,
+  name = "imputedAssay"
+)
+
+\S4method{SGDImpute}{QFeatures}(
+  x,
+  ...,
+  reducedDimName = "SGD",
+  exprs_values = NULL,
+  assay.type = NULL,
+  name = "imputedAssay"
 )
 }
 \arguments{
-\item{x}{a numeric matrix of expression counts or mass spectrometry intensities containing missing values and with
-features in the rows and samples in columns.
-Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.}
+\item{x}{a numeric matrix of expression counts or mass spectrometry
+intensities containing missing values and with features in the rows and
+samples in columns.
 
-\item{...}{For the \code{SGDImpute} generic, additional arguments to pass to specific methods.}
+Alternatively, a \linkS4class{SummarizedExperiment},
+\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+containing such a matrix.}
 
-\item{sgdGMF_reducedDims}{the output obtained by \code{\link{runSGD}} or \code{\link{calculateSGD}}. If \code{x} is a
-\linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken from \code{\link{reducedDim}(x, 'SGD')}.}
+\item{...}{For the \code{SGDImpute} generic, additional arguments to
+pass to specific methods.}
+
+\item{sgdGMF_reducedDims}{the output obtained by \code{\link{runSGD}} or
+\code{\link{calculateSGD}}. If \code{x} is a
+\linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken
+from \code{\link{reducedDim}(x, reducedDimName)}.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
 
-\item{assay.type}{Integer scalar or string indicating which assay of \code{x} contains the values of interest.}
+\item{assay.type}{Integer scalar or string indicating which assay of
+\code{x} contains the values of interest.}
 
-\item{reducedDimName}{the name of the \code{\link{reducedDim}} slot corresponding to the dimensionality reduction
-obtained with runSGD when \code{x} is a \linkS4class{SingleCellExperiment}.}
+\item{name}{New assay name included for the matrix with imputed values.}
+
+\item{reducedDimName}{the name of the \code{\link{reducedDim}} slot
+corresponding to the dimensionality reduction obtained with runSGD when
+\code{x} is a \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}
+object.}
 }
 \value{
-A SingleCellExperiment object is returned with an extra assay containing the imputed values.
+For \linkS4class{SummarizedExperiment},
+\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}, a similar
+object now containing an extra assay with the imputed values.
+
+For a matrix, a matrix with missing values imputed.
 }
 \description{
 Impute missing values based on the results of runSGD.
 }
 \details{
 Imputation is only possible after running \code{runSGD} using all features.
-Therefore, \code{subset_row} or \code{ntop} should be set to NULL.
+Therefore, \code{subset_row} or \code{ntop} should be set to NULL when
+performing the matrix factorization.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)

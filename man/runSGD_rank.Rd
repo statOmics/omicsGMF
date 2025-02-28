@@ -6,13 +6,16 @@
 \alias{calculateSGD_rank,ANY-method}
 \alias{calculateSGD_rank,SummarizedExperiment-method}
 \alias{calculateSGD_rank,SingleCellExperiment-method}
+\alias{.runSGD_rank}
 \title{Perform an eigendecomposition for model selection based on a screeplot.}
 \usage{
 calculateSGD_rank(x, ...)
 
+runSGD_rank(x, ...)
+
 \S4method{calculateSGD_rank}{ANY}(
   x,
-  family = poisson(),
+  family = gaussian(),
   maxcomp = 100,
   ntop = NULL,
   X = NULL,
@@ -32,61 +35,80 @@ calculateSGD_rank(x, ...)
 \S4method{calculateSGD_rank}{SummarizedExperiment}(
   x,
   ...,
-  exprs_values = "counts",
+  exprs_values = 1,
   assay.type = exprs_values,
-  family = poisson()
+  family = gaussian()
 )
 
 \S4method{calculateSGD_rank}{SingleCellExperiment}(
   x,
   ...,
-  exprs_values = "counts",
+  exprs_values = 1,
   dimred = NULL,
   n_dimred = NULL,
   assay.type = exprs_values,
-  family = poisson()
+  family = gaussian()
 )
 
-runSGD_rank(x, ..., altexp = NULL, name = "rank_SGD")
+.runSGD_rank(x, ..., altexp = NULL, name = "rank_SGD")
 }
 \arguments{
-\item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
-rows are features and columns are cells.
-Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-For \code{runSGD}, a \linkS4class{SingleCellExperiment} object containing such a matrix.}
+\item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or
+mass spectrometry intensities where rows are features and columns are cells.
+Alternatively, a \linkS4class{SummarizedExperiment} or
+\linkS4class{SingleCellExperiment} containing such a matrix.
 
-\item{...}{For the \code{calculateSGD} generic, additional arguments to pass to specific methods such as \link{sgdgmf.rank}.
-For the SummarizedExperiment and SingleCellExperiment methods, additional arguments to pass to the ANY method.
+For \code{runSGD}, a \linkS4class{SummarizedExperiment},
+\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+containing such a matrix.}
+
+\item{...}{For the \code{calculateSGD} generic, additional arguments to
+pass to specific methods such as \link{sgdgmf.rank}.
+For the SummarizedExperiment and SingleCellExperiment methods, additional
+arguments to pass to the ANY method.
 
 For \code{runSGD}, additional arguments to pass to \code{calculateSGD}.}
 
-\item{family}{The distribution family that is used for the estimation of the parameters.}
+\item{family}{The distribution family that is used for the estimation of
+the parameters.}
 
-\item{maxcomp}{Scalar indicating the maximal number of eigenvalues to compute.}
+\item{maxcomp}{Scalar indicating the maximal number of eigenvalues to
+compute.}
 
-\item{ntop}{Numeric scalar specifying the number of features with the highest variances to use for dimensionality reduction.
+\item{ntop}{Numeric scalar specifying the number of features with the
+highest variances to use for dimensionality reduction.
 Default uses all features.}
 
 \item{X}{Sample-level covariate matrix. Defaults to column of ones.}
 
 \item{Z}{Feature-level covariate matrix. Defaults to column of ones.}
 
-\item{offset}{offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(), this should therefore be on the log-scale}
+\item{offset}{offset matrix with same dimensions as x that is added to the
+linear predictor. Note that if family = poisson(),
+this should therefore be on the log-scale}
 
-\item{weights}{weight matrix with same dimensions as x that determines the weight of each observation.}
+\item{weights}{weight matrix with same dimensions as x that determines the
+weight of each observation.}
 
-\item{subset_row}{Vector specifying the subset of features to use for dimensionality reduction.
-This can be a character vector of row names, an integer vector of row indices or a logical vector.}
+\item{subset_row}{Vector specifying the subset of features to use for
+dimensionality reduction.
+This can be a character vector of row names, an integer vector of row
+indices or a logical vector.}
 
-\item{scale}{Logical scalar, should the expression values be standardized? Not recommended for non-Gaussian data.}
+\item{scale}{Logical scalar, should the expression values be standardized?
+Not recommended for non-Gaussian data.}
 
 \item{transposed}{Logical scalar, is \code{x} transposed with cells in rows?}
 
-\item{BSPARAM}{A \linkS4class{BiocSingularParam} object specifying which algorithm should be used to perform the PCA.
-This is used in \code{runPCA} to put all information in the sample latent factors.}
+\item{BSPARAM}{A \linkS4class{BiocSingularParam} object specifying which
+algorithm should be used to perform the PCA.
+This is used in \code{runPCA} to put all information in the sample
+latent factors.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying whether the cross-validation
-should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and control.cv$nthreads are
+\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying whether
+the cross-validation
+should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and
+control.cv$nthreads are
 not specified, parallelization is enabled with nthreads = BPPARAM$workers.}
 
 \item{method}{rank selection method, see \link{sgdgmf.rank}.}
@@ -95,15 +117,20 @@ not specified, parallelization is enabled with nthreads = BPPARAM$workers.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
 
-\item{assay.type}{Integer scalar or string indicating which assay of \code{x} contains the values of interest.}
+\item{assay.type}{Integer scalar or string indicating which assay of
+\code{x} contains the values of interest.}
 
-\item{dimred}{String or integer scalar specifying the existing dimensionality reduction results to use.}
+\item{dimred}{String or integer scalar specifying the existing
+dimensionality reduction results to use.}
 
-\item{n_dimred}{Integer scalar or vector specifying the dimensions to use if \code{dimred} is specified.}
+\item{n_dimred}{Integer scalar or vector specifying the dimensions to use
+if \code{dimred} is specified.}
 
-\item{altexp}{String or integer scalar specifying an alternative experiment containing the input data.}
+\item{altexp}{String or integer scalar specifying an alternative experiment
+containing the input data.}
 
-\item{name}{String specifying the name to be used to store the result in the \code{\link{metadata}} of the output.}
+\item{name}{String specifying the name to be used to store the result in
+the \code{\link{metadata}} of the output.}
 }
 \value{
 A list containing the eigenvalues. If a
@@ -114,10 +141,14 @@ given as input, this is stored in the metadata of this object.
 Perform an eigendecomposition for model selection based on a screeplot.
 }
 \details{
-sgdGMF uses sampling of the data to estimate the parameters, which can alter with different seeds. Also, cross-validation
-puts a random selection of values to missing. This means that the result will change slightly across different runs.
-For full reproducibility, users should call \code{\link{set.seed}} prior to running \code{runSGD} with such algorithms.
-(Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses approximate algorithms by default.)
+sgdGMF uses sampling of the data to estimate the parameters, which can
+alter with different seeds. Also, cross-validation
+puts a random selection of values to missing. This means that the result
+will change slightly across different runs.
+For full reproducibility, users should call \code{\link{set.seed}} prior to
+running \code{runSGD} with such algorithms.
+(Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
+approximate algorithms by default.)
 }
 \section{Feature selection}{
 

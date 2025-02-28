@@ -221,7 +221,7 @@ setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_valu
 #' @rdname runSGD_cv
 #' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-runSGD_cv <-  function(x, ..., altexp = NULL, name = "cv_SGD")
+.runSGD_cv <-  function(x, ..., altexp = NULL, name = "cv_SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
@@ -232,4 +232,39 @@ runSGD_cv <-  function(x, ..., altexp = NULL, name = "cv_SGD")
     x
 }
 
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_cv", "SummarizedExperiment", function(x, ...)
+{
+    warning("runSGD_cv is only compatible with SingleCellExperiment. Therefore
+            the SummarizedExperiment is changed to a SingleCellExperiment.")
+
+    .runSGD_cv(as(x, "SingleCellExperiment"), ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_cv", "SingleCellExperiment", function(x, ...)
+{
+    .runSGD_cv(x, ...)
+})
+
+
+#' @export
+#' @rdname runSGD
+setMethod("runSGD_cv", "QFeatures", function(x, ...,
+                                          exprs_values = NULL,
+                                          assay.type = NULL)
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+    x[[assay.type]] <- runSGD_cv(x[[assay.type]], ...)
+    x
+})
 
