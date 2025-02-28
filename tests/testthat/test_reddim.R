@@ -107,7 +107,17 @@ test_that("calculateSGD_cv() works on gaussian data with missing values", {
 
 
 
+test_that("calculateSGD_rank() works on poisson data", {
+    set.seed(100)
+    res1 <- metadata(runSGD_rank(sce, maxcomp = 5))$rank_SGD
+    set.seed(100)
+    res2 <- calculateSGD_rank(sce, maxcomp = 5)
+    expect_identical(res1, res2)
+    set.seed(100)
+    res3 <- calculateSGD_rank(assay(sce, 'counts'), maxcomp = 5)
+    expect_identical(res2, res3)
 
+})
 
 
 
