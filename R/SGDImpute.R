@@ -37,6 +37,10 @@ NULL
 
 .imputeMissingValues <- function(x, sgdGMF_reducedDims)
 {
+    if(attr(sgdGMF_reducedDims,"family")$family != "gaussian"){
+        stop("Imputation currently only possible for Gaussian family.")
+    }
+
     if(is.null(attr(sgdGMF_reducedDims, "offset"))){
         means <- attr(sgdGMF_reducedDims,'B') %*% t(attr(sgdGMF_reducedDims,'X')) +
             attr(sgdGMF_reducedDims,'Z') %*% t(attr(sgdGMF_reducedDims,'Gamma')) +

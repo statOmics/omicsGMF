@@ -8,7 +8,8 @@
 #' @param X Sample-level covariate matrix. Defaults to column of ones.
 #' @param Z Feature-level covariate matrix. Defaults to column of ones.
 #' @param family The distribution family that is used for the estimation of the parameters.
-#' @param offset offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(), this should therefore be on the log-scale
+#' @param offset offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(),
+#' this should therefore be on the log-scale
 #' @param weights weight matrix with same dimensions as x that determines the weight of each observation.
 #' @param ntop Numeric scalar specifying the number of features with the highest variances to use for dimensionality reduction.
 #' Default uses all features.
@@ -83,7 +84,8 @@ NULL
 #' @importFrom BiocParallel SerialParam bpstart bpstop
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.rank
-.calculate_sgd_rank <- function(x, family = poisson(), maxcomp = 100, ntop=NULL,
+#' @importFrom stats gaussian
+.calculate_sgd_rank <- function(x, family = gaussian(), maxcomp = 100, ntop=NULL,
                               X = NULL, Z = NULL, offset = NULL, weights = NULL,
                               subset_row=NULL, scale=FALSE, transposed=FALSE,
                               BSPARAM = bsparam(), BPPARAM = SerialParam(),
@@ -162,8 +164,8 @@ setMethod("calculateSGD_rank", "ANY", .calculate_sgd_rank)
 #' @export
 #' @rdname runSGD_rank
 #' @importFrom SummarizedExperiment assay
-#' @importFrom stats poisson
-setMethod("calculateSGD_rank", "SummarizedExperiment", function(x, ..., exprs_values="counts", assay.type=exprs_values, family = poisson())
+#' @importFrom stats gaussian
+setMethod("calculateSGD_rank", "SummarizedExperiment", function(x, ..., exprs_values=1, assay.type=exprs_values, family = gaussian())
 {
     .checkfamily(assay(x, assay.type), family)
     .calculate_sgd_rank(assay(x, assay.type), family, ...)
@@ -171,8 +173,8 @@ setMethod("calculateSGD_rank", "SummarizedExperiment", function(x, ..., exprs_va
 
 #' @export
 #' @rdname runSGD_rank
-#' @importFrom stats poisson
-setMethod("calculateSGD_rank", "SingleCellExperiment", function(x, ..., exprs_values="counts", dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = poisson())
+#' @importFrom stats gaussian
+setMethod("calculateSGD_rank", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
     mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
     .checkfamily(mat, family)
