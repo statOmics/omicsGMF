@@ -197,7 +197,7 @@ sim_intensities <- matrix(rnorm(n = prod(dim(example_sce)),
                                 mean = 1, sd = 1),
                           nrow = nrow(example_sce))
 NAs <- rbinom(n = prod(dim(sim_intensities)), size = 1, prob = 0.3) == 1
-sim_intensities[NAs == 1] <- NA
+sim_intensities[NAs] <- NA
 
 colnames(sim_intensities) <- colnames(example_sce)
 rownames(sim_intensities) <- rownames(example_sce)
