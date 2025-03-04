@@ -18,15 +18,19 @@ screeplot_rank(x, ...)
 plotSGD_rank(x, ..., name = "rank_SGD")
 }
 \arguments{
-\item{x}{Output of \link{sgdgmf.rank} or \link{runSGD_rank}.}
+\item{x}{Output of \link{sgdgmf.rank}, \link{calculateSGD_rank} or
+\link{runSGD_rank}.}
 
-\item{...}{For the \code{screeplot_rank} generic, additional arguments to pass to specific methods.}
+\item{...}{For the \code{screeplot_rank} generic, additional arguments to
+pass to specific methods.}
 
 \item{maxcomp}{Numeric scalar indicating the number of eigenvalues to plot.}
 
-\item{type}{Type of scree plot to make: choose between 'point', 'barplot' or 'lines.}
+\item{type}{Type of scree plot to make: choose between 'point', 'barplot'
+or 'lines.}
 
-\item{name}{String specifying the name to be used to obtain the rank object in the \code{\link{metadata}}.}
+\item{name}{String specifying the name to be used to obtain the rank object
+in the \code{\link{metadata}}.}
 }
 \value{
 A \link{plot} object.
@@ -35,7 +39,8 @@ A \link{plot} object.
 Functions to create a scree plot for model selection.
 }
 \details{
-This function plots a screeplot based on the output of \link{runSGD_rank} or \link{sgdgmf.rank}.
+This function plots a screeplot based on the output of
+\link{runSGD_rank} or \link{sgdgmf.rank}.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)

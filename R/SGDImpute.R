@@ -5,12 +5,12 @@
 #' samples in columns.
 #'
 #' Alternatively, a \linkS4class{SummarizedExperiment},
-#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param reducedDimName the name of the \code{\link{reducedDim}} slot
 #' corresponding to the dimensionality reduction obtained with runSGD when
-#' \code{x} is a \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}
-#' object.
+#' \code{x} is a \linkS4class{SingleCellExperiment} or
+#' \link[QFeatures]{QFeatures} object.
 #' @param sgdGMF_reducedDims the output obtained by \code{\link{runSGD}} or
 #' \code{\link{calculateSGD}}. If \code{x} is a
 #' \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken
@@ -29,7 +29,7 @@
 #'
 #' @return
 #' For \linkS4class{SummarizedExperiment},
-#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}, a similar
+#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures}, a similar
 #' object now containing an extra assay with the imputed values.
 #'
 #' For a matrix, a matrix with missing values imputed.
@@ -142,7 +142,7 @@ setMethod("SGDImpute", "QFeatures", function(x,
         assay.type <- exprs_values
     }
 
-    if(class(x[[assay.type]]) != "SingleCellExperiment"){
+    if(is(x[[assay.type]], "SingleCellExperiment")){
         stop("First run runSGD on the appropriate assay.")
     }
 

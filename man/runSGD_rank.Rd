@@ -6,7 +6,10 @@
 \alias{calculateSGD_rank,ANY-method}
 \alias{calculateSGD_rank,SummarizedExperiment-method}
 \alias{calculateSGD_rank,SingleCellExperiment-method}
-\alias{.runSGD_rank}
+\alias{calculateSGD_rank,QFeatures-method}
+\alias{runSGD_rank,SummarizedExperiment-method}
+\alias{runSGD_rank,SingleCellExperiment-method}
+\alias{runSGD_rank,QFeatures-method}
 \title{Perform an eigendecomposition for model selection based on a screeplot.}
 \usage{
 calculateSGD_rank(x, ...)
@@ -50,7 +53,21 @@ runSGD_rank(x, ...)
   family = gaussian()
 )
 
-.runSGD_rank(x, ..., altexp = NULL, name = "rank_SGD")
+\S4method{calculateSGD_rank}{QFeatures}(
+  x,
+  ...,
+  exprs_values = NULL,
+  dimred = NULL,
+  n_dimred = NULL,
+  assay.type = NULL,
+  family = gaussian()
+)
+
+\S4method{runSGD_rank}{SummarizedExperiment}(x, ...)
+
+\S4method{runSGD_rank}{SingleCellExperiment}(x, ..., altexp = NULL, name = "rank_SGD")
+
+\S4method{runSGD_rank}{QFeatures}(x, ..., exprs_values = NULL, assay.type = NULL)
 }
 \arguments{
 \item{x}{For \code{calculateSGD}, a numeric matrix of expression counts or
@@ -59,7 +76,7 @@ Alternatively, a \linkS4class{SummarizedExperiment} or
 \linkS4class{SingleCellExperiment} containing such a matrix.
 
 For \code{runSGD}, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 containing such a matrix.}
 
 \item{...}{For the \code{calculateSGD} generic, additional arguments to
@@ -149,26 +166,10 @@ For full reproducibility, users should call \code{\link{set.seed}} prior to
 running \code{runSGD} with such algorithms.
 (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
 approximate algorithms by default.)
+
+For feature selection and using alternative Experiments, see
+\code{\link{runSGD}}.
 }
-\section{Feature selection}{
-
-This section is relevant if \code{x} is a numeric matrix with features in rows and cells in columns;
-or if \code{x} is a \linkS4class{SingleCellExperiment} and \code{dimred=NULL}.
-In the latter, the expression values are obtained from the assay specified by \code{assay.type}.
-
-The \code{subset_row} argument specifies the features to use for dimensionality reduction.
-The aim is to allow users to specify highly variable features to improve the signal/noise ratio,
-or to specify genes in a pathway of interest to focus on particular aspects of heterogeneity.
-
-If \code{subset_row=NULL}, the \code{ntop} features with the largest variances are used instead.
-We literally compute the variances from the expression values without considering any mean-variance trend,
-so often a more considered choice of genes is possible, e.g., with \pkg{scran} functions.
-Note that the value of \code{ntop} is ignored if \code{subset_row} is specified.
-
-If \code{scale=TRUE}, the expression values for each feature are standardized so that their variance is unity.
-This will also remove features with standard deviations below 1e-8.
-}
-
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)
 example_sce <- runSGD_rank(example_sce,

@@ -1,17 +1,22 @@
 
 # This code is adapted from the scater package.
 
-#' Wrapper functions to create plots for specific types of reduced dimension results in a SingleCellExperiment object,
-#' similar as the \code{scater} package.
+#' Wrapper functions to create plots for specific types of reduced dimension
+#' results in a SingleCellExperiment object, similar as the \code{scater}
+#' package.
 #'
 #' @param object A SingleCellExperiment object.
-#' @param ... Additional arguments to pass to \code{\link{plotReducedDim}} from the \code{scater} package.
-#' @param ncomponents Numeric scalar indicating the number of dimensions components to (calculate and) plot. This can also be a numeric vector,
+#' @param ... Additional arguments to pass to \code{\link{plotReducedDim}}
+#' from the \code{scater} package.
+#' @param ncomponents Numeric scalar indicating the number of dimensions
+#' components to (calculate and) plot. This can also be a numeric vector,
 #' see \link{plotReducedDim} for details
-#' @param dimred A string or integer scalar indicating the reduced dimension result in \code{\link{reducedDims}}(object) to plot.
+#' @param dimred A string or integer scalar indicating the reduced dimension
+#' result in \code{\link{reducedDims}}(object) to plot.
 #'
-#' @details This is a wrapper around \code{\link{plotReducedDim}} that uses the "SGD" slot from the
-#' \code{\link{reducedDims}} to obtain a dimensionality reduction plot.
+#' @details This is a wrapper around \code{\link{plotReducedDim}} that uses
+#' the "SGD" slot from the \code{\link{reducedDims}} to obtain a
+#' dimensionality reduction plot.
 #'
 #' @return
 #' A \link{ggplot} object.
@@ -37,6 +42,7 @@ NULL
 #' @export
 #' @rdname plotSGD
 #' @importFrom scater plotReducedDim
+#' @import ggplot2
 plotSGD <- function(object, ..., ncomponents=2, dimred = "SGD")
 {
     scater::plotReducedDim(object, ncomponents = ncomponents, dimred = dimred, ...)

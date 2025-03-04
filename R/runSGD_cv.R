@@ -1,73 +1,94 @@
-#' Perform a stochastic gradient descent generalized matrix factorization (sgdGMF) on cells,
-#' based on the expression or mass spectrometry data in a SingleCellExperiment object.
+#' Perform a stochastic gradient descent generalized matrix factorization
+#' (sgdGMF) on cells, based on the expression or mass spectrometry data in a
+#' SingleCellExperiment, SummarizedExperiment or QFeatures object.
+#' @param x For \code{calculateSGD_cv}, a numeric matrix of expression counts
+#' or mass spectrometry intensities where rows are features and columns are
+#' cells.
 #'
-#' @param x For \code{calculateSGD}, a numeric matrix of expression counts or mass spectrometry intensities where
-#' rows are features and columns are cells.
-#' Alternatively, a \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} containing such a matrix.
-#' For \code{runSGD}, a \linkS4class{SingleCellExperiment} object containing such a matrix.
-#' @param ncomponents Numeric vector indicating the different number of components used in cross-validation.
+#' Alternatively, a \linkS4class{SummarizedExperiment},
+#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
+#' containing such a matrix.
+#' @param ncomponents Numeric vector indicating the different number of
+#' components used in cross-validation.
 #' @param X Sample-level covariate matrix. Defaults to column of ones.
 #' @param Z Feature-level covariate matrix. Defaults to column of ones.
-#' @param family The distribution family that is used for the estimation of the parameters.
-#' @param offset offset matrix with same dimensions as x that is added to the linear predictor. Note that if family = poisson(),
-#' this should therefore be on the log-scale
-#' @param weights weight matrix with same dimensions as x that determines the weight of each observation.
-#' @param ntop Numeric scalar specifying the number of features with the highest variances to use for dimensionality reduction.
-#' Default uses all features.
-#' @param subset_row Vector specifying the subset of features to use for dimensionality reduction.
-#' This can be a character vector of row names, an integer vector of row indices or a logical vector.
-#' @param assay.type Integer scalar or string indicating which assay of \code{x} contains the values of interest.
-#' @param scale Logical scalar, should the expression values be standardized? Not recommended for non-Gaussian data.
-#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which algorithm should be used to perform the PCA.
-#' This is used in \code{runPCA} to put all information in the sample latent factors.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether the cross-validation
-#' should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and control.cv$nthreads are
+#' @param family The distribution family that is used for the estimation of
+#' the parameters.
+#' @param offset offset matrix with same dimensions as x that is added to the
+#' linear predictor. Note that if family = poisson(),
+#' this should therefore be on the log-scale.
+#' @param weights weight matrix with same dimensions as x that determines the
+#' weight of each observation.
+#' @param ntop Numeric scalar specifying the number of features with the
+#' highest variances to use for dimensionality reduction. Default uses all
+#' features.
+#' @param subset_row Vector specifying the subset of features to use for
+#' dimensionality reduction. This can be a character vector of row names, an
+#' integer vector of row indices or a logical vector.
+#' @param assay.type Integer scalar or string indicating which assay of
+#' \code{x} contains the values of interest.
+#' @param scale Logical scalar, should the expression values be standardized?
+#' Not recommended for non-Gaussian data.
+#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which
+#' algorithm should be used to perform the PCA.
+#' This is used in \code{runPCA} to put all information in the sample latent
+#' factors.
+#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether
+#' the cross-validation should be parallelized. If BPPARAM$workers > 1 and
+#' control.cv$parallel and control.cv$nthreads are
 #' not specified, parallelization is enabled with nthreads = BPPARAM$workers.
-#' @param altexp String or integer scalar specifying an alternative experiment containing the input data.
-#' @param dimred String or integer scalar specifying the existing dimensionality reduction results to use.
-#' @param n_dimred Integer scalar or vector specifying the dimensions to use if \code{dimred} is specified.
+#' @param altexp String or integer scalar specifying an alternative experiment
+#' containing the input data.
+#' @param dimred String or integer scalar specifying the existing
+#' dimensionality reduction results to use.
+#' @param n_dimred Integer scalar or vector specifying the dimensions to use
+#' if \code{dimred} is specified.
 #' @param exprs_values Alias to \code{assay.type}.
-#' @param ... For the \code{calculateSGD} generic, additional arguments to pass to specific methods.
-#' For the SummarizedExperiment and SingleCellExperiment methods, additional arguments to pass to the ANY method.
+#' @param ... For the \code{calculateSGD} generic, additional arguments to
+#' pass to specific methods.
+#' For the SummarizedExperiment and SingleCellExperiment methods, additional
+#' arguments to pass to the ANY method. For the QFeatures method, additional
+#' arguments to pass to the SingleCellExperiment method.
 #'
 #' For \code{runSGD}, additional arguments to pass to \code{calculateSGD}.
-#' @param name String specifying the name to be used to store the result in the \code{\link{reducedDims}} of the output.
+#' @param name String specifying the name to be used to store the result in
+#' the \code{\link{reducedDims}} of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
-#' @param method estimation algorithm from the \code{sgdGMF} package used. see \link{sgdgmf.fit}.
-#' @param sampling sub-sampling strategy to use if method = "sgd". See \link{sgdgmf.fit} from the \code{sgdGMF} package.
-#' @param control.init control parameters for the initialization, used in the \code{sgdGMF} package. See \link{sgdgmf.init} and \link{set.control.init}.
-#' @param control.alg control parameters for the estimation, used in the \code{sgdGMF} package. See \link{sgdgmf.fit} and \link{set.control.alg}.
-#' @param control.cv control parameters for the cross-validation, used in the \code{sgdGMF} package. See \link{sgdgmf.cv} and \link{set.control.cv}.
-#' @param penalty ridge penalty added for the estimation of the parameters in the \code{sgdGMF} package. see \link{sgdgmf.fit}.
+#' @param method estimation algorithm from the \code{sgdGMF} package used.
+#' See \link{sgdgmf.fit}.
+#' @param sampling sub-sampling strategy to use if method = "sgd".
+#' See \link{sgdgmf.fit} from the \code{sgdGMF} package.
+#' @param control.init control parameters for the initialization, used in the
+#' \code{sgdGMF} package. See \link{sgdgmf.init} and \link{set.control.init}.
+#' @param control.alg control parameters for the estimation, used in the
+#' \code{sgdGMF} package. See \link{sgdgmf.fit} and \link{set.control.alg}.
+#' @param control.cv control parameters for the cross-validation, used in the
+#' \code{sgdGMF} package. See \link{sgdgmf.cv} and \link{set.control.cv}.
+#' @param penalty ridge penalty added for the estimation of the parameters in
+#' the \code{sgdGMF} package. see \link{sgdgmf.fit}.
 #'
 #' @details
-#' sgdGMF uses sampling of the data to estimate the parameters, which can alter with different seeds. Also, cross-validation
-#' puts a random selection of values to missing. This means that the result will change slightly across different runs.
-#' For full reproducibility, users should call \code{\link{set.seed}} prior to running \code{runSGD} with such algorithms.
-#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses approximate algorithms by default.)
+#' sgdGMF uses sampling of the data to estimate the parameters, which can
+#' alter with different seeds. Also, cross-validation
+#' puts a random selection of values to missing. This means that the result
+#' will change slightly across different runs.
+#' For full reproducibility, users should call \code{\link{set.seed}} prior to
+#' running \code{\link{runSGD}} with such algorithms.
+#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
+#' approximate algorithms by default.)
 #'
-#' @section Feature selection:
-#' This section is relevant if \code{x} is a numeric matrix with features in rows and cells in columns;
-#' or if \code{x} is a \linkS4class{SingleCellExperiment} and \code{dimred=NULL}.
-#' In the latter, the expression values are obtained from the assay specified by \code{assay.type}.
-#'
-#' The \code{subset_row} argument specifies the features to use for dimensionality reduction.
-#' The aim is to allow users to specify highly variable features to improve the signal/noise ratio,
-#' or to specify genes in a pathway of interest to focus on particular aspects of heterogeneity.
-#'
-#' If \code{subset_row=NULL}, the \code{ntop} features with the largest variances are used instead.
-#' We literally compute the variances from the expression values without considering any mean-variance trend,
-#' so often a more considered choice of genes is possible, e.g., with \pkg{scran} functions.
-#' Note that the value of \code{ntop} is ignored if \code{subset_row} is specified.
-#'
-#' If \code{scale=TRUE}, the expression values for each feature are standardized so that their variance is unity.
-#' This will also remove features with standard deviations below 1e-8.
+#' For feature selection and using alternative Experiments, see
+#' \code{\link{runSGD}}.
 #'
 #'
 #' @return
-#' A table containing the summary statistics of the cross-validation. If a
-#' \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} was
-#' given as input, this is stored in the metadata of this object.
+#'
+#' For \code{calculateSGD_cv}, A table containing the summary statistics of
+#' the cross-validation.
+#'
+#' For \code{runSGD_cv}, a SingleCellExperiment object is returned containing
+#' this table in the metadata of this object.
+#'
 #'
 #' @name runSGD_cv
 #' @seealso
@@ -211,9 +232,38 @@ setMethod("calculateSGD_cv", "SummarizedExperiment", function(x, ..., exprs_valu
 #' @importFrom stats gaussian
 setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
-  mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
+  mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred))
   .checkfamily(mat, family)
   .calculate_sgd_cv(mat, family, transposed=!is.null(dimred), ...)
+})
+
+#' @export
+#' @rdname runSGD_cv
+#' @importFrom stats gaussian
+setMethod("calculateSGD_cv", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL)
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+    x <- x[[assay.type]]
+    calculateSGD_cv(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1)
+})
+
+
+
+
+
+#' @export
+#' @rdname runSGD_cv
+setMethod("runSGD_cv", "SummarizedExperiment", function(x, ...)
+{
+    warning("runSGD_cv is only compatible with SingleCellExperiment. Therefore
+            the SummarizedExperiment is changed to a SingleCellExperiment.")
+
+    runSGD_cv(as(x, "SingleCellExperiment"), ...)
 })
 
 
@@ -221,39 +271,22 @@ setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_valu
 #' @rdname runSGD_cv
 #' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-.runSGD_cv <-  function(x, ..., altexp = NULL, name = "cv_SGD")
+setMethod("runSGD_cv", "SingleCellExperiment", function(x, ...,
+                                                        altexp=NULL,
+                                                        name="cv_SGD")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
         y <- x
     }
-    S4Vectors::metadata(x)[[name]] <- calculateSGD_cv(x, ...)
-    x
-}
-
-
-#' @export
-#' @rdname runSGD
-setMethod("runSGD_cv", "SummarizedExperiment", function(x, ...)
-{
-    warning("runSGD_cv is only compatible with SingleCellExperiment. Therefore
-            the SummarizedExperiment is changed to a SingleCellExperiment.")
-
-    .runSGD_cv(as(x, "SingleCellExperiment"), ...)
+    S4Vectors::metadata(y)[[name]] <- calculateSGD_cv(y, ...)
+    y
 })
 
 
 #' @export
-#' @rdname runSGD
-setMethod("runSGD_cv", "SingleCellExperiment", function(x, ...)
-{
-    .runSGD_cv(x, ...)
-})
-
-
-#' @export
-#' @rdname runSGD
+#' @rdname runSGD_cv
 setMethod("runSGD_cv", "QFeatures", function(x, ...,
                                           exprs_values = NULL,
                                           assay.type = NULL)

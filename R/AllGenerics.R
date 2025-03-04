@@ -30,8 +30,12 @@ setGeneric("calculateSGD_rank", function(x, ...) standardGeneric("calculateSGD_r
 #' @rdname runSGD_rank
 setGeneric("runSGD_rank", function(x, ...) standardGeneric("runSGD_rank"))
 
-
 #' @export
 #' @rdname plotSGD_rank
 setGeneric("screeplot_rank", function(x, ...) standardGeneric("screeplot_rank"))
+
+
+#' @export
+#' @rdname plotSGD_cv
+setGeneric("plot_cv", function(x, ...) standardGeneric("plot_cv"))
 

@@ -6,7 +6,7 @@
 #' \linkS4class{SingleCellExperiment} containing such a matrix.
 #'
 #' For \code{runSGD}, a \linkS4class{SummarizedExperiment},
-#' \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param maxcomp Scalar indicating the maximal number of eigenvalues to
 #' compute.
@@ -67,23 +67,8 @@
 #' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
 #' approximate algorithms by default.)
 #'
-#' @section Feature selection:
-#' This section is relevant if \code{x} is a numeric matrix with features in rows and cells in columns;
-#' or if \code{x} is a \linkS4class{SingleCellExperiment} and \code{dimred=NULL}.
-#' In the latter, the expression values are obtained from the assay specified by \code{assay.type}.
-#'
-#' The \code{subset_row} argument specifies the features to use for dimensionality reduction.
-#' The aim is to allow users to specify highly variable features to improve the signal/noise ratio,
-#' or to specify genes in a pathway of interest to focus on particular aspects of heterogeneity.
-#'
-#' If \code{subset_row=NULL}, the \code{ntop} features with the largest variances are used instead.
-#' We literally compute the variances from the expression values without considering any mean-variance trend,
-#' so often a more considered choice of genes is possible, e.g., with \pkg{scran} functions.
-#' Note that the value of \code{ntop} is ignored if \code{subset_row} is specified.
-#'
-#' If \code{scale=TRUE}, the expression values for each feature are standardized so that their variance is unity.
-#' This will also remove features with standard deviations below 1e-8.
-#'
+#' For feature selection and using alternative Experiments, see
+#' \code{\link{runSGD}}.
 #'
 #' @return
 #' A list containing the eigenvalues. If a
@@ -208,47 +193,54 @@ setMethod("calculateSGD_rank", "SingleCellExperiment", function(x, ..., exprs_va
     .calculate_sgd_rank(mat, family, transposed=!is.null(dimred), ...)
 })
 
+#' @export
+#' @rdname runSGD_rank
+#' @importFrom stats gaussian
+setMethod("calculateSGD_rank", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
+{
+    if (is.null(assay.type) & is.null(exprs_values)){
+        stop("Using a QFeatures class, assay.type should be defined.")
+    }
+    if (is.null(assay.type)){
+        assay.type <- exprs_values
+    }
+    x <- x[[assay.type]]
+    calculateSGD_rank(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1, family = family)
+})
+
 
 #' @export
 #' @rdname runSGD_rank
-#' @importFrom S4Vectors metadata<-
-#' @importFrom SingleCellExperiment altExp
-.runSGD_rank <-  function(x, ..., altexp = NULL, name = "rank_SGD")
-{
-    if (!is.null(altexp)) {
-        y <- altExp(x, altexp)
-    } else {
-        y <- x
-    }
-    S4Vectors::metadata(x)[[name]] <- calculateSGD_rank(x, ...)
-    x
-}
-
-
-
-
-#' @export
-#' @rdname runSGD
 setMethod("runSGD_rank", "SummarizedExperiment", function(x, ...)
 {
     warning("runSGD_rank is only compatible with SingleCellExperiment.
             Thereforethe SummarizedExperiment is changed to a
             SingleCellExperiment.")
 
-    .runSGD_rank(as(x, "SingleCellExperiment"), ...)
+    runSGD_rank(as(x, "SingleCellExperiment"), ...)
 })
 
 
 #' @export
-#' @rdname runSGD
-setMethod("runSGD_rank", "SingleCellExperiment", function(x, ...)
+#' @rdname runSGD_rank
+#' @importFrom S4Vectors metadata<-
+#' @importFrom SingleCellExperiment altExp
+setMethod("runSGD_rank", "SingleCellExperiment", function(x, ...,
+                                                          altexp = NULL,
+                                                          name = "rank_SGD")
 {
-    .runSGD_rank(x, ...)
+    if (!is.null(altexp)) {
+        y <- altExp(x, altexp)
+    } else {
+        y <- x
+    }
+    S4Vectors::metadata(y)[[name]] <- calculateSGD_rank(y, ...)
+    y
 })
 
 
 #' @export
-#' @rdname runSGD
+#' @rdname runSGD_rank
 setMethod("runSGD_rank", "QFeatures", function(x, ...,
                                              exprs_values = NULL,
                                              assay.type = NULL)

@@ -44,7 +44,7 @@ intensities containing missing values and with features in the rows and
 samples in columns.
 
 Alternatively, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures} object
+\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 containing such a matrix.}
 
 \item{...}{For the \code{SGDImpute} generic, additional arguments to
@@ -64,12 +64,12 @@ from \code{\link{reducedDim}(x, reducedDimName)}.}
 
 \item{reducedDimName}{the name of the \code{\link{reducedDim}} slot
 corresponding to the dimensionality reduction obtained with runSGD when
-\code{x} is a \linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}
-object.}
+\code{x} is a \linkS4class{SingleCellExperiment} or
+\link[QFeatures]{QFeatures} object.}
 }
 \value{
 For \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \linkS4class{QFeatures}, a similar
+\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures}, a similar
 object now containing an extra assay with the imputed values.
 
 For a matrix, a matrix with missing values imputed.

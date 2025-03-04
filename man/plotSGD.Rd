@@ -2,31 +2,37 @@
 % Please edit documentation in R/plotSGD.R
 \name{plotSGD}
 \alias{plotSGD}
-\title{Wrapper functions to create plots for specific types of reduced dimension results in a SingleCellExperiment object,
-similar as the \code{scater} package.}
+\title{Wrapper functions to create plots for specific types of reduced dimension
+results in a SingleCellExperiment object, similar as the \code{scater}
+package.}
 \usage{
 plotSGD(object, ..., ncomponents = 2, dimred = "SGD")
 }
 \arguments{
 \item{object}{A SingleCellExperiment object.}
 
-\item{...}{Additional arguments to pass to \code{\link{plotReducedDim}} from the \code{scater} package.}
+\item{...}{Additional arguments to pass to \code{\link{plotReducedDim}}
+from the \code{scater} package.}
 
-\item{ncomponents}{Numeric scalar indicating the number of dimensions components to (calculate and) plot. This can also be a numeric vector,
+\item{ncomponents}{Numeric scalar indicating the number of dimensions
+components to (calculate and) plot. This can also be a numeric vector,
 see \link{plotReducedDim} for details}
 
-\item{dimred}{A string or integer scalar indicating the reduced dimension result in \code{\link{reducedDims}}(object) to plot.}
+\item{dimred}{A string or integer scalar indicating the reduced dimension
+result in \code{\link{reducedDims}}(object) to plot.}
 }
 \value{
 A \link{ggplot} object.
 }
 \description{
-Wrapper functions to create plots for specific types of reduced dimension results in a SingleCellExperiment object,
-similar as the \code{scater} package.
+Wrapper functions to create plots for specific types of reduced dimension
+results in a SingleCellExperiment object, similar as the \code{scater}
+package.
 }
 \details{
-This is a wrapper around \code{\link{plotReducedDim}} that uses the "SGD" slot from the
-\code{\link{reducedDims}} to obtain a dimensionality reduction plot.
+This is a wrapper around \code{\link{plotReducedDim}} that uses
+the "SGD" slot from the \code{\link{reducedDims}} to obtain a
+dimensionality reduction plot.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)

@@ -216,7 +216,7 @@ example_sce <- SGDImpute(example_sce,
 
 
 assay(example_sce,'logintensities')[1:5,1:5]
-assay(example_sce,'"logintensities_imputed"')[1:5,1:5]
+assay(example_sce,'logintensities_imputed')[1:5,1:5]
 ```
 
 

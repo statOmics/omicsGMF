@@ -1,11 +1,16 @@
 #' Functions to create a scree plot for model selection.
 #'
-#' @param x Output of \link{sgdgmf.rank} or \link{runSGD_rank}.
-#' @param ... For the \code{screeplot_rank} generic, additional arguments to pass to specific methods.
+#' @param x Output of \link{sgdgmf.rank}, \link{calculateSGD_rank} or
+#' \link{runSGD_rank}.
+#' @param ... For the \code{screeplot_rank} generic, additional arguments to
+#' pass to specific methods.
 #' @param maxcomp Numeric scalar indicating the number of eigenvalues to plot.
-#' @param type Type of scree plot to make: choose between 'point', 'barplot' or 'lines.
-#' @param name String specifying the name to be used to obtain the rank object in the \code{\link{metadata}}.
-#' @details This function plots a screeplot based on the output of \link{runSGD_rank} or \link{sgdgmf.rank}.
+#' @param type Type of scree plot to make: choose between 'point', 'barplot'
+#' or 'lines.
+#' @param name String specifying the name to be used to obtain the rank object
+#' in the \code{\link{metadata}}.
+#' @details This function plots a screeplot based on the output of
+#' \link{runSGD_rank} or \link{sgdgmf.rank}.
 #'
 #' @return
 #' A \link{plot} object.
