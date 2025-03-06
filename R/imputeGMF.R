@@ -1,4 +1,4 @@
-#' Impute missing values based on the results of runSGD.
+#' Impute missing values based on the results of runGMF.
 #'
 #' @param x a numeric matrix of expression counts or mass spectrometry
 #' intensities containing missing values and with features in the rows and
@@ -8,22 +8,22 @@
 #' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param reducedDimName the name of the \code{\link{reducedDim}} slot
-#' corresponding to the dimensionality reduction obtained with runSGD when
+#' corresponding to the dimensionality reduction obtained with runGMF when
 #' \code{x} is a \linkS4class{SingleCellExperiment} or
 #' \link[QFeatures]{QFeatures} object.
-#' @param sgdGMF_reducedDims the output obtained by \code{\link{runSGD}} or
-#' \code{\link{calculateSGD}}. If \code{x} is a
+#' @param sgdGMF_reducedDims the output obtained by \code{\link{runGMF}} or
+#' \code{\link{calculateGMF}}. If \code{x} is a
 #' \linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken
 #' from \code{\link{reducedDim}(x, reducedDimName)}.
 #' @param assay.type Integer scalar or string indicating which assay of
 #' \code{x} contains the values of interest.
 #' @param exprs_values Alias to \code{assay.type}.
 #' @param name New assay name included for the matrix with imputed values.
-#' @param ... For the \code{SGDImpute} generic, additional arguments to
+#' @param ... For the \code{imputeGMF} generic, additional arguments to
 #' pass to specific methods.
 #'
 #' @details
-#' Imputation is only possible after running \code{runSGD} using all features.
+#' Imputation is only possible after running \code{runGMF} using all features.
 #' Therefore, \code{subset_row} or \code{ntop} should be set to NULL when
 #' performing the matrix factorization.
 #'
@@ -34,9 +34,9 @@
 #'
 #' For a matrix, a matrix with missing values imputed.
 #'
-#' @name SGDImpute
+#' @name imputeGMF
 #' @seealso
-#' \code{\link{runSGD}}, to conveniently obtain the matrix factorization.
+#' \code{\link{runGMF}}, to conveniently obtain the matrix factorization.
 #'
 #' @author Alexandre Segers
 #'
@@ -44,11 +44,11 @@
 #' example_sce <- mockSCE(ncells = 200, ngenes = 100)
 #' example_sce <- logNormCounts(example_sce)
 #' assay(example_sce, 'logcounts')[assay(example_sce, 'logcounts') == 0] <- NA
-#' example_sce <- runSGD(example_sce,
+#' example_sce <- runGMF(example_sce,
 #'                       exprs_values="logcounts",
 #'                       family = gaussian(),
 #'                       ncomponents = 3)
-#' example_sce <- SGDImpute(example_sce)
+#' example_sce <- imputeGMF(example_sce)
 NULL
 
 .imputeMissingValues <- function(x, sgdGMF_reducedDims)
@@ -74,25 +74,25 @@ NULL
 
 
 #' @export
-#' @rdname SGDImpute
-setMethod("SGDImpute", "ANY", .imputeMissingValues)
+#' @rdname imputeGMF
+setMethod("imputeGMF", "ANY", .imputeMissingValues)
 
 
 
 
 #' @export
-#' @rdname SGDImpute
+#' @rdname imputeGMF
 #' @importFrom SummarizedExperiment assay assay<-
-setMethod("SGDImpute", "SummarizedExperiment", function(x, sgdGMF_reducedDims,
+setMethod("imputeGMF", "SummarizedExperiment", function(x, sgdGMF_reducedDims,
                                                         exprs_values=1,
                                                         assay.type=exprs_values,
                                                         name = "imputedAssay")
 {
   if(is.null(sgdGMF_reducedDims)){
-    stop("first run 'runSGD' to obtain estimations for Imputation")
+    stop("first run 'runGMF' to obtain estimations for Imputation")
   }
   if(nrow(attr(sgdGMF_reducedDims,'rotation')) != nrow(x)){
-      stop("all features should be used when performing 'runSGD' if
+      stop("all features should be used when performing 'runGMF' if
            imputation is wanted.")
   }
 
@@ -101,20 +101,20 @@ setMethod("SGDImpute", "SummarizedExperiment", function(x, sgdGMF_reducedDims,
 })
 
 #' @export
-#' @rdname SGDImpute
+#' @rdname imputeGMF
 #' @importFrom SummarizedExperiment assay assay<-
-setMethod("SGDImpute", "SingleCellExperiment", function(x,
-                                                        reducedDimName = "SGD",
+setMethod("imputeGMF", "SingleCellExperiment", function(x,
+                                                        reducedDimName = "GMF",
                                                         sgdGMF_reducedDims = reducedDim(x, reducedDimName),
                                                         exprs_values=1,
                                                         assay.type=exprs_values,
                                                         name = "imputedAssay")
 {
   if(is.null(sgdGMF_reducedDims)){
-    stop("first run 'runSGD' to obtain estimations for Imputation")
+    stop("first run 'runGMF' to obtain estimations for Imputation")
   }
   if(nrow(attr(sgdGMF_reducedDims, 'rotation')) != nrow(x)){
-        stop("all features should be used when performing 'runSGD' if
+        stop("all features should be used when performing 'runGMF' if
              imputation is wanted.")
   }
 
@@ -125,11 +125,11 @@ setMethod("SGDImpute", "SingleCellExperiment", function(x,
 
 
 #' @export
-#' @rdname SGDImpute
+#' @rdname imputeGMF
 #' @importFrom SummarizedExperiment assay assay<-
-setMethod("SGDImpute", "QFeatures", function(x,
+setMethod("imputeGMF", "QFeatures", function(x,
                                              ...,
-                                             reducedDimName = "SGD",
+                                             reducedDimName = "GMF",
                                              exprs_values=NULL,
                                              assay.type=NULL,
                                              name = "imputedAssay")
@@ -143,7 +143,7 @@ setMethod("SGDImpute", "QFeatures", function(x,
     }
 
     if(is(x[[assay.type]], "SingleCellExperiment")){
-        stop("First run runSGD on the appropriate assay.")
+        stop("First run runGMF on the appropriate assay.")
     }
 
     imputedValues <- .imputeMissingValues(assay(x[[assay.type]], 1),

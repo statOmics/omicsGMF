@@ -1,7 +1,7 @@
 #' Functions to create a scree plot for model selection.
 #'
-#' @param x Output of \link{sgdgmf.rank}, \link{calculateSGD_rank} or
-#' \link{runSGD_rank}.
+#' @param x Output of \link{sgdgmf.rank}, \link{calculateRankGMF} or
+#' \link{runRankGMF}.
 #' @param ... For the \code{screeplot_rank} generic, additional arguments to
 #' pass to specific methods.
 #' @param maxcomp Numeric scalar indicating the number of eigenvalues to plot.
@@ -10,23 +10,23 @@
 #' @param name String specifying the name to be used to obtain the rank object
 #' in the \code{\link{metadata}}.
 #' @details This function plots a screeplot based on the output of
-#' \link{runSGD_rank} or \link{sgdgmf.rank}.
+#' \link{runRankGMF} or \link{sgdgmf.rank}.
 #'
 #' @return
 #' A \link{plot} object.
-#' @name plotSGD_rank
+#' @name plotRank
 #' @seealso
-#' \code{\link{runSGD_rank}}, to calculate the eigenvalues.
+#' \code{\link{runRankGMF}}, to calculate the eigenvalues.
 #' @author Alexandre Segers
 #'
 #' @examples
 #' example_sce <- mockSCE(ncells = 200, ngenes = 100)
-#' example_sce <- runSGD_rank(example_sce,
+#' example_sce <- runRankGMF(example_sce,
 #'                          exprs_values="counts",
 #'                          family = poisson(),
 #'                          maxcomp = 10)
-#' head(metadata(example_sce)[["rank_SGD"]])
-#' plotSGD_rank(example_sce)
+#' head(metadata(example_sce)[["rank_GMF"]])
+#' plotRank(example_sce)
 NULL
 
 
@@ -64,14 +64,14 @@ NULL
 
 
 #' @export
-#' @rdname plotSGD_rank
+#' @rdname plotRank
 setMethod("screeplot_rank", "ANY", .screeplot_rank)
 
 
 #' @export
-#' @rdname plotSGD_rank
+#' @rdname plotRank
 #' @importFrom S4Vectors metadata
-plotSGD_rank <-  function(x, ..., name = "rank_SGD")
+plotRank <-  function(x, ..., name = "rank_GMF")
 {
 
     screeplot_rank(x = S4Vectors::metadata(x)[[name]],

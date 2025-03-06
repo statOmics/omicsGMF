@@ -1,7 +1,7 @@
 #' Perform a stochastic gradient descent generalized matrix factorization
 #' (sgdGMF) on cells, based on the expression or mass spectrometry data in a
 #' SingleCellExperiment, SummarizedExperiment or QFeatures object.
-#' @param x For \code{calculateSGD_cv}, a numeric matrix of expression counts
+#' @param x For \code{calculateCVGMF}, a numeric matrix of expression counts
 #' or mass spectrometry intensities where rows are features and columns are
 #' cells.
 #'
@@ -44,13 +44,13 @@
 #' @param n_dimred Integer scalar or vector specifying the dimensions to use
 #' if \code{dimred} is specified.
 #' @param exprs_values Alias to \code{assay.type}.
-#' @param ... For the \code{calculateSGD} generic, additional arguments to
+#' @param ... For the \code{calculateCVGMF} generic, additional arguments to
 #' pass to specific methods.
 #' For the SummarizedExperiment and SingleCellExperiment methods, additional
 #' arguments to pass to the ANY method. For the QFeatures method, additional
 #' arguments to pass to the SingleCellExperiment method.
 #'
-#' For \code{runSGD}, additional arguments to pass to \code{calculateSGD}.
+#' For \code{runCVGMF}, additional arguments to pass to \code{calculateCVGMF}.
 #' @param name String specifying the name to be used to store the result in
 #' the \code{\link{reducedDims}} of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
@@ -73,24 +73,24 @@
 #' puts a random selection of values to missing. This means that the result
 #' will change slightly across different runs.
 #' For full reproducibility, users should call \code{\link{set.seed}} prior to
-#' running \code{\link{runSGD}} with such algorithms.
+#' running \code{\link{runGMF}} with such algorithms.
 #' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
 #' approximate algorithms by default.)
 #'
 #' For feature selection and using alternative Experiments, see
-#' \code{\link{runSGD}}.
+#' \code{\link{runGMF}}.
 #'
 #'
 #' @return
 #'
-#' For \code{calculateSGD_cv}, A table containing the summary statistics of
+#' For \code{calculateCVGMF}, A table containing the summary statistics of
 #' the cross-validation.
 #'
-#' For \code{runSGD_cv}, a SingleCellExperiment object is returned containing
+#' For \code{runCVGMF}, a SingleCellExperiment object is returned containing
 #' this table in the metadata of this object.
 #'
 #'
-#' @name runSGD_cv
+#' @name runCVGMF
 #' @seealso
 #' \code{\link[sgdGMF]{sgdgmf.cv}}, for the underlying calculations.
 #'
@@ -98,12 +98,12 @@
 #'
 #' @examples
 #' example_sce <- mockSCE(ncells = 200, ngenes = 100)
-#' example_sce <- runSGD_cv(example_sce,
+#' example_sce <- runCVGMF(example_sce,
 #'                          exprs_values="counts",
 #'                          family = poisson(),
 #'                          ncomponents = c(1:5))
-#' head(metadata(example_sce)[["cv_SGD"]])
-#' example_sce <- runSGD(example_sce,
+#' head(metadata(example_sce)[["cv_GMF"]])
+#' example_sce <- runGMF(example_sce,
 #'                       exprs_values="counts",
 #'                       family = poisson(),
 #'                       ncomponents = 3)
@@ -119,7 +119,7 @@ NULL
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.cv
 #' @importFrom stats gaussian
-.calculate_sgd_cv <- function(x, family = gaussian(), ncomponents = 1:10, ntop=NULL,
+.calculate_gmf_cv <- function(x, family = gaussian(), ncomponents = 1:10, ntop=NULL,
                               X = NULL, Z = NULL, offset = NULL, weights = NULL,
                               subset_row=NULL, scale=FALSE, transposed=FALSE,
                               BSPARAM = bsparam(), BPPARAM = SerialParam(),
@@ -214,33 +214,33 @@ NULL
 }
 
 #' @export
-#' @rdname runSGD_cv
-setMethod("calculateSGD_cv", "ANY", .calculate_sgd_cv)
+#' @rdname runCVGMF
+setMethod("calculateCVGMF", "ANY", .calculate_gmf_cv)
 
 #' @export
-#' @rdname runSGD_cv
+#' @rdname runCVGMF
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats gaussian
-setMethod("calculateSGD_cv", "SummarizedExperiment", function(x, ..., exprs_values=1, assay.type=exprs_values, family = gaussian())
+setMethod("calculateCVGMF", "SummarizedExperiment", function(x, ..., exprs_values=1, assay.type=exprs_values, family = gaussian())
 {
     .checkfamily(assay(x, assay.type), family)
-    .calculate_sgd_cv(assay(x, assay.type), family, ...)
+    .calculate_gmf_cv(assay(x, assay.type), family, ...)
 })
 
 #' @export
-#' @rdname runSGD_cv
+#' @rdname runCVGMF
 #' @importFrom stats gaussian
-setMethod("calculateSGD_cv", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
+setMethod("calculateCVGMF", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
   mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred))
   .checkfamily(mat, family)
-  .calculate_sgd_cv(mat, family, transposed=!is.null(dimred), ...)
+  .calculate_gmf_cv(mat, family, transposed=!is.null(dimred), ...)
 })
 
 #' @export
-#' @rdname runSGD_cv
+#' @rdname runCVGMF
 #' @importFrom stats gaussian
-setMethod("calculateSGD_cv", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL)
+setMethod("calculateCVGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL)
 {
     if (is.null(assay.type) & is.null(exprs_values)){
         stop("Using a QFeatures class, assay.type should be defined.")
@@ -249,7 +249,7 @@ setMethod("calculateSGD_cv", "QFeatures", function(x, ..., exprs_values = NULL, 
         assay.type <- exprs_values
     }
     x <- x[[assay.type]]
-    calculateSGD_cv(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1)
+    calculateCVGMF(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1)
 })
 
 
@@ -257,37 +257,37 @@ setMethod("calculateSGD_cv", "QFeatures", function(x, ..., exprs_values = NULL, 
 
 
 #' @export
-#' @rdname runSGD_cv
-setMethod("runSGD_cv", "SummarizedExperiment", function(x, ...)
+#' @rdname runCVGMF
+setMethod("runCVGMF", "SummarizedExperiment", function(x, ...)
 {
-    warning("runSGD_cv is only compatible with SingleCellExperiment. Therefore
+    warning("runCVGMF is only compatible with SingleCellExperiment. Therefore
             the SummarizedExperiment is changed to a SingleCellExperiment.")
 
-    runSGD_cv(as(x, "SingleCellExperiment"), ...)
+    runCVGMF(as(x, "SingleCellExperiment"), ...)
 })
 
 
 #' @export
-#' @rdname runSGD_cv
+#' @rdname runCVGMF
 #' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-setMethod("runSGD_cv", "SingleCellExperiment", function(x, ...,
+setMethod("runCVGMF", "SingleCellExperiment", function(x, ...,
                                                         altexp=NULL,
-                                                        name="cv_SGD")
+                                                        name="cv_GMF")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
         y <- x
     }
-    S4Vectors::metadata(y)[[name]] <- calculateSGD_cv(y, ...)
+    S4Vectors::metadata(y)[[name]] <- calculateCVGMF(y, ...)
     y
 })
 
 
 #' @export
-#' @rdname runSGD_cv
-setMethod("runSGD_cv", "QFeatures", function(x, ...,
+#' @rdname runCVGMF
+setMethod("runCVGMF", "QFeatures", function(x, ...,
                                           exprs_values = NULL,
                                           assay.type = NULL)
 {
@@ -297,7 +297,7 @@ setMethod("runSGD_cv", "QFeatures", function(x, ...,
     if (is.null(assay.type)){
         assay.type <- exprs_values
     }
-    x[[assay.type]] <- runSGD_cv(x[[assay.type]], ...)
+    x[[assay.type]] <- runCVGMF(x[[assay.type]], ...)
     x
 })
 

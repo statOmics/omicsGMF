@@ -15,12 +15,12 @@
 #' result in \code{\link{reducedDims}}(object) to plot.
 #'
 #' @details This is a wrapper around \code{\link{plotReducedDim}} that uses
-#' the "SGD" slot from the \code{\link{reducedDims}} to obtain a
+#' the "GMF" slot from the \code{\link{reducedDims}} to obtain a
 #' dimensionality reduction plot.
 #'
 #' @return
 #' A \link{ggplot} object.
-#' @name plotSGD
+#' @name plotGMF
 #' @seealso
 #' \code{\link{plotReducedDim}}, for the underlying calculations.
 #' \code{\link{plotPCA}}, for a similar wrapper.
@@ -28,22 +28,22 @@
 #'
 #' @examples
 #' example_sce <- mockSCE(ncells = 200, ngenes = 100)
-#' example_sce <- runSGD_cv(example_sce,
+#' example_sce <- runCVGMF(example_sce,
 #'                          exprs_values="counts",
 #'                          family = poisson(),
 #'                          ncomponents = c(1:5))
-#' example_sce <- runSGD(example_sce,
+#' example_sce <- runGMF(example_sce,
 #'                       exprs_values="counts",
 #'                       family = poisson(),
 #'                       ncomponents = 3)
-#' plotSGD(example_sce)
+#' plotGMF(example_sce)
 NULL
 
 #' @export
-#' @rdname plotSGD
+#' @rdname plotGMF
 #' @importFrom scater plotReducedDim
 #' @import ggplot2
-plotSGD <- function(object, ..., ncomponents=2, dimred = "SGD")
+plotGMF <- function(object, ..., ncomponents=2, dimred = "GMF")
 {
     scater::plotReducedDim(object, ncomponents = ncomponents, dimred = dimred, ...)
 }

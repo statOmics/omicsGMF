@@ -1,11 +1,11 @@
 #' Perform an eigendecomposition for model selection based on a screeplot.
 #'
-#' @param x For \code{calculateSGD}, a numeric matrix of expression counts or
+#' @param x For \code{calculateRankGMF}, a numeric matrix of expression counts or
 #' mass spectrometry intensities where rows are features and columns are cells.
 #' Alternatively, a \linkS4class{SummarizedExperiment} or
 #' \linkS4class{SingleCellExperiment} containing such a matrix.
 #'
-#' For \code{runSGD}, a \linkS4class{SummarizedExperiment},
+#' For \code{runRankGMF}, a \linkS4class{SummarizedExperiment},
 #' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param maxcomp Scalar indicating the maximal number of eigenvalues to
@@ -46,12 +46,12 @@
 #' @param n_dimred Integer scalar or vector specifying the dimensions to use
 #' if \code{dimred} is specified.
 #' @param exprs_values Alias to \code{assay.type}.
-#' @param ... For the \code{calculateSGD} generic, additional arguments to
+#' @param ... For the \code{calculateRankGMF} generic, additional arguments to
 #' pass to specific methods such as \link{sgdgmf.rank}.
 #' For the SummarizedExperiment and SingleCellExperiment methods, additional
 #' arguments to pass to the ANY method.
 #'
-#' For \code{runSGD}, additional arguments to pass to \code{calculateSGD}.
+#' For \code{runRankGMF}, additional arguments to pass to \code{calculateRankGMF}.
 #' @param name String specifying the name to be used to store the result in
 #' the \code{\link{metadata}} of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
@@ -63,19 +63,19 @@
 #' puts a random selection of values to missing. This means that the result
 #' will change slightly across different runs.
 #' For full reproducibility, users should call \code{\link{set.seed}} prior to
-#' running \code{runSGD} with such algorithms.
+#' running \code{runRankGMF} with such algorithms.
 #' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
 #' approximate algorithms by default.)
 #'
 #' For feature selection and using alternative Experiments, see
-#' \code{\link{runSGD}}.
+#' \code{\link{runGMF}}.
 #'
 #' @return
 #' A list containing the eigenvalues. If a
 #' \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} was
 #' given as input, this is stored in the metadata of this object.
 #'
-#' @name runSGD_rank
+#' @name runRankGMF
 #' @seealso
 #' \code{\link[sgdGMF]{sgdgmf.rank}}, for the underlying calculations.
 #'
@@ -83,12 +83,12 @@
 #'
 #' @examples
 #' example_sce <- mockSCE(ncells = 200, ngenes = 100)
-#' example_sce <- runSGD_rank(example_sce,
+#' example_sce <- runRankGMF(example_sce,
 #'                          exprs_values="counts",
 #'                          family = poisson(),
 #'                          maxcomp = 10)
-#' head(metadata(example_sce)[["rank_SGD"]])
-#' plotSGD_rank(example_sce)
+#' head(metadata(example_sce)[["rank_GMF"]])
+#' plotRank(example_sce)
 NULL
 
 #' @importFrom MatrixGenerics colVars
@@ -97,7 +97,7 @@ NULL
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.rank
 #' @importFrom stats gaussian
-.calculate_sgd_rank <- function(x, family = gaussian(), maxcomp = 100, ntop=NULL,
+.calculate_gmf_rank <- function(x, family = gaussian(), maxcomp = 100, ntop=NULL,
                               X = NULL, Z = NULL, offset = NULL, weights = NULL,
                               subset_row=NULL, scale=FALSE, transposed=FALSE,
                               BSPARAM = bsparam(), BPPARAM = SerialParam(),
@@ -105,7 +105,6 @@ NULL
                               )
     #TODO: ask Cristian upon default of method = "oht"
 {
-
     # For DelayedArray's parallelized rowVars/colVars.
     oldbp <- getAutoBPPARAM()
     setAutoBPPARAM(BPPARAM)
@@ -170,33 +169,33 @@ NULL
 }
 
 #' @export
-#' @rdname runSGD_rank
-setMethod("calculateSGD_rank", "ANY", .calculate_sgd_rank)
+#' @rdname runRankGMF
+setMethod("calculateRankGMF", "ANY", .calculate_gmf_rank)
 
 #' @export
-#' @rdname runSGD_rank
+#' @rdname runRankGMF
 #' @importFrom SummarizedExperiment assay
 #' @importFrom stats gaussian
-setMethod("calculateSGD_rank", "SummarizedExperiment", function(x, ..., exprs_values=1, assay.type=exprs_values, family = gaussian())
+setMethod("calculateRankGMF", "SummarizedExperiment", function(x, ..., exprs_values=1, assay.type=exprs_values, family = gaussian())
 {
     .checkfamily(assay(x, assay.type), family)
-    .calculate_sgd_rank(assay(x, assay.type), family, ...)
+    .calculate_gmf_rank(assay(x, assay.type), family, ...)
 })
 
 #' @export
-#' @rdname runSGD_rank
+#' @rdname runRankGMF
 #' @importFrom stats gaussian
-setMethod("calculateSGD_rank", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
+setMethod("calculateRankGMF", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
     mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
     .checkfamily(mat, family)
-    .calculate_sgd_rank(mat, family, transposed=!is.null(dimred), ...)
+    .calculate_gmf_rank(mat, family, transposed=!is.null(dimred), ...)
 })
 
 #' @export
-#' @rdname runSGD_rank
+#' @rdname runRankGMF
 #' @importFrom stats gaussian
-setMethod("calculateSGD_rank", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
+setMethod("calculateRankGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
 {
     if (is.null(assay.type) & is.null(exprs_values)){
         stop("Using a QFeatures class, assay.type should be defined.")
@@ -205,43 +204,43 @@ setMethod("calculateSGD_rank", "QFeatures", function(x, ..., exprs_values = NULL
         assay.type <- exprs_values
     }
     x <- x[[assay.type]]
-    calculateSGD_rank(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1, family = family)
+    calculateRankGMF(x, ..., dimred = dimred, n_dimred = n_dimred, assay.type = 1, family = family)
 })
 
 
 #' @export
-#' @rdname runSGD_rank
-setMethod("runSGD_rank", "SummarizedExperiment", function(x, ...)
+#' @rdname runRankGMF
+setMethod("runRankGMF", "SummarizedExperiment", function(x, ...)
 {
-    warning("runSGD_rank is only compatible with SingleCellExperiment.
+    warning("runRankGMF is only compatible with SingleCellExperiment.
             Thereforethe SummarizedExperiment is changed to a
             SingleCellExperiment.")
 
-    runSGD_rank(as(x, "SingleCellExperiment"), ...)
+    runRankGMF(as(x, "SingleCellExperiment"), ...)
 })
 
 
 #' @export
-#' @rdname runSGD_rank
+#' @rdname runRankGMF
 #' @importFrom S4Vectors metadata<-
 #' @importFrom SingleCellExperiment altExp
-setMethod("runSGD_rank", "SingleCellExperiment", function(x, ...,
+setMethod("runRankGMF", "SingleCellExperiment", function(x, ...,
                                                           altexp = NULL,
-                                                          name = "rank_SGD")
+                                                          name = "rank_GMF")
 {
     if (!is.null(altexp)) {
         y <- altExp(x, altexp)
     } else {
         y <- x
     }
-    S4Vectors::metadata(y)[[name]] <- calculateSGD_rank(y, ...)
+    S4Vectors::metadata(y)[[name]] <- calculateRankGMF(y, ...)
     y
 })
 
 
 #' @export
-#' @rdname runSGD_rank
-setMethod("runSGD_rank", "QFeatures", function(x, ...,
+#' @rdname runRankGMF
+setMethod("runRankGMF", "QFeatures", function(x, ...,
                                              exprs_values = NULL,
                                              assay.type = NULL)
 {
@@ -251,7 +250,7 @@ setMethod("runSGD_rank", "QFeatures", function(x, ...,
     if (is.null(assay.type)){
         assay.type <- exprs_values
     }
-    x[[assay.type]] <- runSGD_rank(x[[assay.type]], ...)
+    x[[assay.type]] <- runRankGMF(x[[assay.type]], ...)
     x
 })
 

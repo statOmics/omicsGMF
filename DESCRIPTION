@@ -1,4 +1,4 @@
-Package: scSGDGMF
+Package: omicsGMF
 Type: Package
 Authors@R: c(
         person("Alexandre", "Segers", role=c("aut", "cre"), email="alexandresegers@outlook.com"),

@@ -10,13 +10,13 @@ output:
     toc: true
     toc_depth: 3
   BiocStyle::pdf_document: default
-package: scSGDGMF
+package: omicsGMF
 abstract: |
-  Proteomics vignette for the scSGDGMF package. This vignette aims to provide a 
+  Proteomics vignette for the omicsGMF package. This vignette aims to provide a 
   detailed description of a matrix factorization done for proteomics data, 
   which can further be used for visualization and imputation of missing values.
 vignette: >
-  %\VignetteIndexEntry{Proteomics-vignette: scSGDGMF}
+  %\VignetteIndexEntry{Proteomics-vignette: omicsGMF}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,14 +27,14 @@ library(knitr)
 
 # Introduction
 
-`scSGDGMF` is a R package to perform generalized matrix factorization which
+`omicsGMF` is a R package to perform generalized matrix factorization which
 can be used for dimensionality reduction and visualization of omics data, and 
 even for the imputation of missing values. It can deal with count data and 
 missing values in a fast way, and therefore 
 does not require log-transformation of RNA-seq data or imputation of proteomics
 data such as conventional PCA. It can perform model selection to optimize the 
 number of latent confounders, i.e. the dimensionality of the reduced space. 
-`scSGDGMF` uses the `sgdGMF` package, but 
+`omicsGMF` uses the `sgdGMF` package, but 
 provides easy wrappers for `SingleCellExperiment` and `SummarizedExperiment` 
 classes, with adapted default values of the parameters for omics data.
 
@@ -45,36 +45,36 @@ described in our preprint [@Castliglioni2024]. There, we show the use of
 we show how this framework can be used to visualize and impute missing values 
 in (single-cell) proteomics data.
 
-In this vignette, we show how `scSGDGMF` can be easily used to obtain the
+In this vignette, we show how `omicsGMF` can be easily used to obtain the
 dimensionality reduction of omics data, to visualize these samples and how to 
 impute missing values. It serves as an alternative to PCA when dealing with
 count or incomplete data, while remaining fast due to its stochastic 
 optimization algorithms. In total, there are four main functions:
 
-1. `calculateSGD_cv` performs cross-validation to determine the optimal number
-of latent confounders. This avoids arbitrarily choosing `ncomponents`, but
-requires some computational time. An alternative is `calculateSGD_rank`, which
+1. `calculateCVGMF` performs cross-validation to determine the optimal number
+of latent confounders. These results can be visualized using `plotCV`. This avoids arbitrarily choosing `ncomponents`, but
+requires some computational time. An alternative is `calculateRankGMF`, which
 performs an eigenvalue decomposition on the deviance residuals. This allows for
-model selection based on a scree plot using `screeplot_rank`, for example using
+model selection based on a scree plot using `plotRank`, for example using
 the elbow method.
 
-2. `runSGD` or `calculateSGD` estimates the latent confounders and the rotation
+2. `runGMF` or `calculateGMF` estimates the latent confounders and the rotation
 matrix, and estimates the respective parameters of the sample-level and 
 feature-level covariates.
 
-3. `plotSGD` plots the samples using its decomposition.
+3. `plotGMF` plots the samples using its decomposition.
 
-4. `SGDImpute` creates a new assay with missing values imputes using the 
-estimates of `runSGD`.
+4. `imputeGMF` creates a new assay with missing values imputes using the 
+estimates of `runGMF`.
 
 
-We first show a standard workflow of `scSGDGMF` on RNA-seq data, followed by 
+We first show a standard workflow of `omicsGMF` on RNA-seq data, followed by 
 a standard workflow on proteomics data.
 
 # Package installation
 
 `sgdGMF` can be installed through CRAN.
-`scSGDGMF` can be installed from Bioconductor with:
+`omicsGMF` can be installed from Bioconductor with:
 
 ```{r, eval=FALSE}
 if(!requireNamespace("sgdGMF", quietly = TRUE))
@@ -83,13 +83,13 @@ if(!requireNamespace("sgdGMF", quietly = TRUE))
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("scSGDGMF")
+BiocManager::install("omicsGMF")
 ```
 
 
 ```{r, echo = TRUE, warning=FALSE, message=FALSE}
 library(sgdGMF)
-library(scSGDGMF)
+library(omicsGMF)
 library(dplyr)
 library(scuttle)
 set.seed(100)
@@ -123,7 +123,7 @@ A recommended step is to estimate the optimal dimensionality in the model
 by using cross-validation. This cross-validation masks a proportion of the
 values as missing, and tries to reconstruct these. Using the out-of-sample 
 deviances, one can estimate the optimal dimensionality of the latent space.
-This can be done with the `calculateSGD_cv` function, which uses 
+This can be done with the `calculateCVGMF` function, which uses 
 \link{sgdgmf.cv} from the `sgdGMF` package. Although the `sgdGMF` package 
 allows great flexibility regarding the optimization algorithm is possible, 
 sensible default values are here introduced for omics data. One
@@ -134,7 +134,7 @@ dimensionality reduction (`exprs_values` or `assay.type`).
 
 
 ```{r}
-cv_proteomics <- calculateSGD_cv(example_sce, 
+cv_proteomics <- calculateCVGMF(example_sce, 
                                  exprs_values="logintensities", 
                                  family = gaussian(), 
                                  ncomponents = c(1:5))
@@ -151,8 +151,8 @@ If data are very large, or when having no idea which range of cross-validation
 values to explore, one can also use a scree plot of the eigenvalues for model
 selection. This approach uses PCA on the deviance residuals to obtain the
 eigenvalues, which is an approximation to the real matrix factorization.
-This can be done using`runSGD_rank` or `calculateSGD_rank` followed
-by `plotSGD_rank` or `screeplot_rank` respectively. Note that now, the 
+This can be done using`runRankGMF` or `calculateRankGMF` followed
+by `plotRank` or `screeplot_rank` respectively. Note that now, the 
 `maxcomp` parameter should be defined, which is the number of 
 eigenvalues computed.
 
@@ -162,7 +162,7 @@ values, using a scree plot for model selection might not be optimal, but
 however remains a fast alternative to cross-validation.
 
 ```{r}
-rank_proteomics <- calculateSGD_rank(example_sce, 
+rank_proteomics <- calculateRankGMF(example_sce, 
                       exprs_values="logintensities", 
                       family = gaussian(),
                       maxcomp = 10)
@@ -172,46 +172,46 @@ screeplot_rank(rank_proteomics, maxcomp = 10)
 
 
 After choosing which number of components to use in the final dimensionality
-reduction, `runSGD` or `calculateSGD` can be used. Again, one should select the
+reduction, `runGMF` or `calculateGMF` can be used. Again, one should select the
 distribution family (`family`), the dimensionality (`ncomponents`) and the 
 assay used (`exprs_values` or `assay.type`). Note that, differently compared to
 `runPCA`, by default all features are used. If this is not wanted, one can 
 for example choose the n most variable genes used with `ntop`. However,
 when the goal is imputing missing values, all features should be used.
-`runSGD` returns the dimensionality
+`runGMF` returns the dimensionality
 reduction in the `reducedDim` argument of the `SingleCellExperiment`. 
 Additional information such as the `rotation` matrix, parameter estimates, 
 the optimization history of `sgdGMF` and many more are available in the 
-`attributes`. See \link{runSGD} for all outputs. 
+`attributes`. See \link{runGMF} for all outputs. 
 
 ```{r}
-example_sce <- runSGD(example_sce, 
+example_sce <- runGMF(example_sce, 
                       exprs_values="logintensities", 
                       family = gaussian(), 
                       ncomponents = 3,
-                      name = "SGD")
+                      name = "GMF")
 ```
 
 
 After computing the matrix factorization, one can visualize the results with
 functions from the \link{scater} package. For example, using `plotReducedDim`,
-one obtains a PCA plot, using the latent factors obtained by `scSGDGMF`. The 
-same plot can be obtained using the wrapper function `plotSGD`.
+one obtains a PCA plot, using the latent factors obtained by `omicsGMF`. The 
+same plot can be obtained using the wrapper function `plotGMF`.
 
 
 ```{r}
-plotReducedDim(example_sce, dimred = "SGD")
+plotReducedDim(example_sce, dimred = "GMF")
 reducedDimNames(example_sce)
-head(reducedDim(example_sce, type = "SGD"))
+head(reducedDim(example_sce, type = "GMF"))
 ```
 
 Also, it is possible to impute the missing values with the mean estimates. This
-can be done with the `SGDImpute` function:
+can be done with the `imputeGMF` function:
 
 ```{r}
-example_sce <- SGDImpute(example_sce, 
+example_sce <- imputeGMF(example_sce, 
                          exprs_values = "logintensities", 
-                         reducedDimName = "SGD",
+                         reducedDimName = "GMF",
                          name = "logintensities_imputed")
 
 

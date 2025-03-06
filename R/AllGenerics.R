@@ -1,41 +1,40 @@
 #' @export
-#' @rdname runSGD
-setGeneric("calculateSGD", function(x, ...) standardGeneric("calculateSGD"))
+#' @rdname runGMF
+setGeneric("calculateGMF", function(x, ...) standardGeneric("calculateGMF"))
 
 #' @export
-#' @rdname runSGD
-setGeneric("runSGD", function(x, ...) standardGeneric("runSGD"))
-
-
-#' @export
-#' @rdname runSGD_cv
-setGeneric("calculateSGD_cv", function(x, ...) standardGeneric("calculateSGD_cv"))
+#' @rdname runGMF
+setGeneric("runGMF", function(x, ...) standardGeneric("runGMF"))
 
 
 #' @export
-#' @rdname runSGD_cv
-setGeneric("runSGD_cv", function(x, ...) standardGeneric("runSGD_cv"))
+#' @rdname runCVGMF
+setGeneric("calculateCVGMF", function(x, ...) standardGeneric("calculateCVGMF"))
 
 
 #' @export
-#' @rdname SGDImpute
-setGeneric("SGDImpute", function(x, ...) standardGeneric("SGDImpute"))
+#' @rdname runCVGMF
+setGeneric("runCVGMF", function(x, ...) standardGeneric("runCVGMF"))
 
 
 #' @export
-#' @rdname runSGD_rank
-setGeneric("calculateSGD_rank", function(x, ...) standardGeneric("calculateSGD_rank"))
+#' @rdname imputeGMF
+setGeneric("imputeGMF", function(x, ...) standardGeneric("imputeGMF"))
+
 
 #' @export
-#' @rdname runSGD_rank
-setGeneric("runSGD_rank", function(x, ...) standardGeneric("runSGD_rank"))
+#' @rdname runRankGMF
+setGeneric("calculateRankGMF", function(x, ...) standardGeneric("calculateRankGMF"))
 
 #' @export
-#' @rdname plotSGD_rank
+#' @rdname runRankGMF
+setGeneric("runRankGMF", function(x, ...) standardGeneric("runRankGMF"))
+
+#' @export
+#' @rdname plotRank
 setGeneric("screeplot_rank", function(x, ...) standardGeneric("screeplot_rank"))
 
-
 #' @export
-#' @rdname plotSGD_cv
+#' @rdname plotCV
 setGeneric("plot_cv", function(x, ...) standardGeneric("plot_cv"))
 
