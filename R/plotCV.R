@@ -1,21 +1,23 @@
 #' Functions to create a scree plot for model selection.
 #'
-#' @param x Output of \link{sgdgmf.cv}, \link{calculateCVGMF} or
-#' \link{runCVGMF}.
+#' @param x Output of \code{\link[sgdGMF]{sgdgmf.cv}},
+#' \code{\link{calculateCVGMF}} or
+#' \code{\link{runCVGMF}}.
 #' @param ... For the \code{plot_cv} generic, additional arguments to
 #' pass to specific methods.
 #' @param name String specifying the name to be used to obtain the
-#'  cross-validation table object in the \code{\link{metadata}}. It is possible
+#'  cross-validation table object in the metadata. It is possible
 #'  to specify multiple names if multiple cross-validations have been ran.
 #' @param method Function for summarization of the cross-validation over
 #' multiple folds. Default is mean.
 #' @param criteria The model selection criteria that is plotted. Default is
 #' 'dev' (deviance residuals), but 'mae', 'mse', 'aic' and 'bic are possible.
 #' @details This function plots a screeplot based on the output of
-#' \link{runCVGMF}, \link{calculateCVGMF} or \link{sgdgmf.cv}.
+#' \code{\link{runCVGMF}}, \code{\link{calculateCVGMF}} or
+#' \code{\link[sgdGMF]{sgdgmf.cv}}.
 #'
 #' @return
-#' A \link{plot} object.
+#' A \code{\link{plot}} object.
 #' @name plotCV
 #' @seealso
 #' \code{\link{runCVGMF}}, to perform the cross-validation.

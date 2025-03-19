@@ -43,17 +43,19 @@ imputeGMF(x, ...)
 intensities containing missing values and with features in the rows and
 samples in columns.
 
-Alternatively, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
-containing such a matrix.}
+Alternatively, a
+\link[SummarizedExperiment]{SummarizedExperiment-class},
+\link[SingleCellExperiment]{SingleCellExperiment-class} or
+\link[QFeatures]{QFeatures} object containing such a matrix.}
 
 \item{...}{For the \code{imputeGMF} generic, additional arguments to
 pass to specific methods.}
 
 \item{sgdGMF_reducedDims}{the output obtained by \code{\link{runGMF}} or
 \code{\link{calculateGMF}}. If \code{x} is a
-\linkS4class{SingleCellExperiment}, \code{sgdGMF_reducedDims} is taken
-from \code{\link{reducedDim}(x, reducedDimName)}.}
+\link[SingleCellExperiment]{SingleCellExperiment-class},
+\code{sgdGMF_reducedDims} is taken
+from \code{\link[SingleCellExperiment]{reducedDim}(x, reducedDimName)}.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
 
@@ -62,14 +64,16 @@ from \code{\link{reducedDim}(x, reducedDimName)}.}
 
 \item{name}{New assay name included for the matrix with imputed values.}
 
-\item{reducedDimName}{the name of the \code{\link{reducedDim}} slot
-corresponding to the dimensionality reduction obtained with runGMF when
-\code{x} is a \linkS4class{SingleCellExperiment} or
+\item{reducedDimName}{the name of the
+\code{\link[SingleCellExperiment]{reducedDim}} slot corresponding to the
+dimensionality reduction obtained with runGMF when
+\code{x} is a \link[SingleCellExperiment]{SingleCellExperiment-class} or
 \link[QFeatures]{QFeatures} object.}
 }
 \value{
-For \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures}, a similar
+For \link[SummarizedExperiment]{SummarizedExperiment-class},
+\link[SingleCellExperiment]{SingleCellExperiment-class}
+or \link[QFeatures]{QFeatures}, a similar
 object now containing an extra assay with the imputed values.
 
 For a matrix, a matrix with missing values imputed.

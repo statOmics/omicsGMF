@@ -13,8 +13,9 @@ plot_cv(x, ...)
 plotCV(x, ..., name = "cv_GMF")
 }
 \arguments{
-\item{x}{Output of \link{sgdgmf.cv}, \link{calculateCVGMF} or
-\link{runCVGMF}.}
+\item{x}{Output of \code{\link[sgdGMF]{sgdgmf.cv}},
+\code{\link{calculateCVGMF}} or
+\code{\link{runCVGMF}}.}
 
 \item{...}{For the \code{plot_cv} generic, additional arguments to
 pass to specific methods.}
@@ -26,18 +27,19 @@ multiple folds. Default is mean.}
 'dev' (deviance residuals), but 'mae', 'mse', 'aic' and 'bic are possible.}
 
 \item{name}{String specifying the name to be used to obtain the
-cross-validation table object in the \code{\link{metadata}}. It is possible
+cross-validation table object in the metadata. It is possible
 to specify multiple names if multiple cross-validations have been ran.}
 }
 \value{
-A \link{plot} object.
+A \code{\link{plot}} object.
 }
 \description{
 Functions to create a scree plot for model selection.
 }
 \details{
 This function plots a screeplot based on the output of
-\link{runCVGMF}, \link{calculateCVGMF} or \link{sgdgmf.cv}.
+\code{\link{runCVGMF}}, \code{\link{calculateCVGMF}} or
+\code{\link[sgdGMF]{sgdgmf.cv}}.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)

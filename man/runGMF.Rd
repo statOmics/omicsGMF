@@ -80,9 +80,9 @@ runGMF(x, ...)
 \item{x}{For \code{calculateGMF}, a numeric matrix of expression counts or
 mass spectrometry intensities where rows are features and columns are cells.
 
-Alternatively, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
-containing such a matrix.}
+Alternatively, a \link[SummarizedExperiment]{SummarizedExperiment-class},
+\link[SingleCellExperiment]{SingleCellExperiment-class} or
+\link[QFeatures]{QFeatures} object containing such a matrix.}
 
 \item{...}{For the \code{calculateGMF} generic, additional arguments to
 pass to specific methods.
@@ -123,19 +123,22 @@ Not recommended for non-Gaussian data.}
 
 \item{transposed}{Logical scalar, is \code{x} transposed with cells in rows?}
 
-\item{BSPARAM}{A \linkS4class{BiocSingularParam} object specifying which
-algorithm should be used to perform the PCA.
-This is used in \code{runPCA} to put all information in the sample latent
-factors.}
+\item{BSPARAM}{A \link[BiocSingular]{BiocSingularParam-class} object
+specifying which algorithm should be used to perform the PCA.
+This is used in \code{\link[scater]{runPCA}} to put all information in the
+sample latent factors.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying whether
-the initialization and cross-validation should be parallelized.}
+\item{BPPARAM}{A \link[BiocParallel]{BiocParallelParam-class} object
+specifying whether the initialization and cross-validation should be
+parallelized.}
 
 \item{control.init}{control parameters for the initialization, used in the
-\code{sgdGMF} package. See \link{sgdgmf.init} and \link{set.control.init}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.init} and
+\link[sgdGMF]{set.control.init}.}
 
 \item{control.alg}{control parameters for the estimation, used in the
-\code{sgdGMF} package. See \link{sgdgmf.fit} and \link{set.control.alg}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.fit} and
+\link[sgdGMF]{set.control.alg}.}
 
 \item{crossval}{if TRUE, performs cross-validation followed by fitting a
 final model with the optimal number of components.
@@ -144,17 +147,18 @@ is done before the final fit.
 See \link{calculateCVGMF} for cross-validation.}
 
 \item{control.cv}{control parameters for the cross-validation, used in the
-\code{sgdGMF} package. See \link{sgdgmf.cv} and \link{set.control.cv}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.cv} and
+\link[sgdGMF]{set.control.cv}.}
 
 \item{penalty}{ridge penalty added for the estimation of the parameters in
-the \code{sgdGMF} package. see \link{sgdgmf.fit}.}
+the \code{sgdGMF} package. see \link[sgdGMF]{sgdgmf.fit}.}
 
 \item{method}{estimation algorithm from the \code{sgdGMF} package used.
-See \link{sgdgmf.fit}. Defaults to 'sgd' for a stochastic gradient
+See \link[sgdGMF]{sgdgmf.fit}. Defaults to 'sgd' for a stochastic gradient
 descent optimization.}
 
 \item{sampling}{sub-sampling strategy to use if method = "sgd". See
-\link{sgdgmf.fit} from the \code{sgdGMF} package. Defaults to 'block'
+\link[sgdGMF]{sgdgmf.fit} from the \code{sgdGMF} package. Defaults to 'block'
 for a block-wise stochastic gradient descent optimization.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
@@ -172,7 +176,7 @@ use if \code{dimred} is specified.}
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in
-the \code{\link{reducedDims}} of the output.}
+the \code{\link[SingleCellExperiment]{reducedDims}} of the output.}
 }
 \value{
 This section is adapted from the \code{scater} package manual.
@@ -181,7 +185,7 @@ For \code{calculateGMF}, a numeric matrix of coordinates for each cell
 (row) in each of \code{ncomponents} PCs (column).
 
 For \code{runGMF}, a SingleCellExperiment object is returned containing
-this matrix in \code{\link{reducedDims}(..., name)}.
+this matrix in \code{\link[SingleCellExperiment]{reducedDims}(..., name)}.
 
 In both cases, the attributes of the PC coordinate matrix contain the
 following elements:
@@ -216,8 +220,8 @@ alter with different seeds.
 This means that the result will change slightly across different runs.
 For full reproducibility, users should call \code{\link{set.seed}} prior to
 running \code{runGMF} with such algorithms.
-(Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
-approximate algorithms by default.)
+(Note that this includes \code{BSPARAM=\link[BiocSingular]{bsparam}()},
+which uses approximate algorithms by default.)
 }
 \section{Feature selection}{
 
@@ -225,8 +229,8 @@ This section is adapted from the \code{scater} package manual.
 
 This section is relevant if \code{x} is a numeric matrix with features in
 rows and cells in columns;
-or if \code{x} is a \linkS4class{SingleCellExperiment} and
-\code{dimred=NULL}.
+or if \code{x} is a \link[SingleCellExperiment]{SingleCellExperiment-class}
+and \code{dimred=NULL}.
 In the latter, the expression values are obtained from the assay specified
 by \code{assay.type}.
 
@@ -256,12 +260,13 @@ is not recommended when using non-Gaussian family distributions.
 
 This section is adapted from the \code{scater} package manual.
 
-If \code{x} is a \linkS4class{SingleCellExperiment}, the method can be
+If \code{x} is a \link[SingleCellExperiment]{SingleCellExperiment-class},
+the method can be
 applied on existing dimensionality reduction results in \code{x} by setting
 the \code{dimred} argument.
 
 The matrix of existing reduced dimensions is taken from
-\code{\link{reducedDim}(x, dimred)}.
+\code{\link[SingleCellExperiment]{reducedDim}(x, dimred)}.
 By default, all dimensions are used to compute the second set of reduced
 dimensions.
 If \code{n_dimred} is also specified, only the first \code{n_dimred}
@@ -277,7 +282,8 @@ This means that any settings of \code{ntop}, \code{subset_row} and
 If \code{x} is a numeric matrix, setting \code{transposed=TRUE} will treat
 the rows as cells and the columns as the variables/diemnsions.
 This allows users to manually pass in dimensionality reduction results
-without needing to wrap them in a \linkS4class{SingleCellExperiment}.
+without needing to wrap them in a
+\link[SingleCellExperiment]{SingleCellExperiment-class}.
 As such, no feature selection or standardization is performed, i.e.,
 \code{ntop}, \code{subset_row} and \code{scale} are ignored.
 }
@@ -288,19 +294,23 @@ As such, no feature selection or standardization is performed, i.e.,
 This section is adapted from the \code{scater} package manual.
 
 This section is relevant if \code{x} is a
-\linkS4class{SingleCellExperiment} and \code{altexp} is not \code{NULL}.
+\link[SingleCellExperiment]{SingleCellExperiment-class} and \code{altexp}
+is not \code{NULL}.
 In such cases, the method is run on data from an alternative
-\linkS4class{SummarizedExperiment} nested within \code{x}.
+\link[SummarizedExperiment]{SummarizedExperiment-class} nested within
+\code{x}.
 This is useful for performing dimensionality reduction on other features
-stored in \code{\link{altExp}(x, altexp)}, e.g., antibody tags.
+stored in \code{\link[SingleCellExperiment]{altExp}(x, altexp)}, e.g.,
+antibody tags.
 
 Setting \code{altexp} with \code{assay.type} will use the specified assay
-from the alternative \linkS4class{SummarizedExperiment}.
+from the alternative \link[SummarizedExperiment]{SummarizedExperiment-class}.
 If the alternative is a SingleCellExperiment, setting \code{dimred} will
 use the specified dimensionality reduction results from the alternative.
 This option will also interact as expected with \code{n_dimred}.
 
-Note that the output is still stored in the \code{\link{reducedDims}} of
+Note that the output is still stored in the
+\code{\link[SingleCellExperiment]{reducedDims}} of
 the output SingleCellExperiment.
 It is advisable to use a different \code{name} to distinguish this output
 from the results generated from the main experiment's assay values.
@@ -321,7 +331,6 @@ head(reducedDim(example_sce))
 }
 \seealso{
 \code{\link[sgdGMF]{sgdgmf.fit}}, for the underlying calculations.
-
 \code{\link[omicsGMF]{plotGMF}}, to conveniently visualize the results.
 \code{\link[omicsGMF]{imputeGMF}}, to conveniently impute missing values.
 }

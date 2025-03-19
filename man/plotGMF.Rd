@@ -9,20 +9,22 @@ package.}
 plotGMF(object, ..., ncomponents = 2, dimred = "GMF")
 }
 \arguments{
-\item{object}{A SingleCellExperiment object.}
+\item{object}{A \link[SingleCellExperiment]{SingleCellExperiment-class}
+object.}
 
-\item{...}{Additional arguments to pass to \code{\link{plotReducedDim}}
+\item{...}{Additional arguments to pass to
+\code{\link[scater]{plotReducedDim}}
 from the \code{scater} package.}
 
 \item{ncomponents}{Numeric scalar indicating the number of dimensions
 components to (calculate and) plot. This can also be a numeric vector,
-see \link{plotReducedDim} for details}
+see \code{\link[scater]{plotReducedDim}} for details}
 
 \item{dimred}{A string or integer scalar indicating the reduced dimension
-result in \code{\link{reducedDims}}(object) to plot.}
+result in \code{\link[SingleCellExperiment]{reducedDims}}(object) to plot.}
 }
 \value{
-A \link{ggplot} object.
+A \code{\link[ggplot2]{ggplot}} object.
 }
 \description{
 Wrapper functions to create plots for specific types of reduced dimension
@@ -30,9 +32,9 @@ results in a SingleCellExperiment object, similar as the \code{scater}
 package.
 }
 \details{
-This is a wrapper around \code{\link{plotReducedDim}} that uses
-the "GMF" slot from the \code{\link{reducedDims}} to obtain a
-dimensionality reduction plot.
+This is a wrapper around \code{\link[scater]{plotReducedDim}} that
+uses the "GMF" slot from the \code{\link[SingleCellExperiment]{reducedDims}}
+to obtain a dimensionality reduction plot.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)
@@ -47,8 +49,8 @@ example_sce <- runGMF(example_sce,
 plotGMF(example_sce)
 }
 \seealso{
-\code{\link{plotReducedDim}}, for the underlying calculations.
-\code{\link{plotPCA}}, for a similar wrapper.
+\code{\link[scater]{plotReducedDim}}, for the underlying calculations.
+\code{\link[scater]{plotPCA}}, for a similar wrapper.
 }
 \author{
 Alexandre Segers

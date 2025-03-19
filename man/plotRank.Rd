@@ -18,8 +18,9 @@ screeplot_rank(x, ...)
 plotRank(x, ..., name = "rank_GMF")
 }
 \arguments{
-\item{x}{Output of \link{sgdgmf.rank}, \link{calculateRankGMF} or
-\link{runRankGMF}.}
+\item{x}{Output of \code{\link[sgdGMF]{sgdgmf.rank}},
+ \code{\link{calculateRankGMF}} or
+\code{\link{runRankGMF}}.}
 
 \item{...}{For the \code{screeplot_rank} generic, additional arguments to
 pass to specific methods.}
@@ -30,7 +31,7 @@ pass to specific methods.}
 or 'lines.}
 
 \item{name}{String specifying the name to be used to obtain the rank object
-in the \code{\link{metadata}}.}
+in the metadata.}
 }
 \value{
 A \link{plot} object.
@@ -40,7 +41,7 @@ Functions to create a scree plot for model selection.
 }
 \details{
 This function plots a screeplot based on the output of
-\link{runRankGMF} or \link{sgdgmf.rank}.
+\code{\link{runRankGMF}} or \code{\link[sgdGMF]{sgdgmf.rank}}.
 }
 \examples{
 example_sce <- mockSCE(ncells = 200, ngenes = 100)

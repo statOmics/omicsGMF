@@ -2,7 +2,7 @@
 
 
 
-scSGDGMF is a Bioconductor wrapper for the sgdGMF package. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. scSGDGMF allows for:
+scSGDGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensible default parameters for this package, and allows for further exploration of the results commonly used in the analysis of omics data. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. scSGDGMF allows for:
 
 - Dimensionality reduction directly on (single-cell) RNA-sequencing count data considering a Poisson or negative binomial family. Therefore, no prior normalization is needed as with conventional PCA.
 - Dimensionality reduction when dealing with missing data. This makes it suitable for (single-cell) proteomics data when considering a Gaussian family.

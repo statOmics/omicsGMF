@@ -5,8 +5,9 @@
 #' or mass spectrometry intensities where rows are features and columns are
 #' cells.
 #'
-#' Alternatively, a \linkS4class{SummarizedExperiment},
-#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
+#' Alternatively, a \link[SummarizedExperiment]{SummarizedExperiment-class},
+#' \link[SingleCellExperiment]{SingleCellExperiment-class} or
+#' \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param ncomponents Numeric vector indicating the different number of
 #' components used in cross-validation.
@@ -29,11 +30,12 @@
 #' \code{x} contains the values of interest.
 #' @param scale Logical scalar, should the expression values be standardized?
 #' Not recommended for non-Gaussian data.
-#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which
-#' algorithm should be used to perform the PCA.
-#' This is used in \code{runPCA} to put all information in the sample latent
-#' factors.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether
+#' @param BSPARAM A \link[BiocSingular]{BiocSingularParam-class} object
+#' specifying which algorithm should be used to perform the PCA.
+#' This is used in \code{\link[scater]{runPCA}} to put all information in the
+#' sample latent factors.
+#' @param BPPARAM A \link[BiocParallel]{BiocParallelParam-class} object
+#' specifying whether
 #' the cross-validation should be parallelized. If BPPARAM$workers > 1 and
 #' control.cv$parallel and control.cv$nthreads are
 #' not specified, parallelization is enabled with nthreads = BPPARAM$workers.
@@ -52,20 +54,23 @@
 #'
 #' For \code{runCVGMF}, additional arguments to pass to \code{calculateCVGMF}.
 #' @param name String specifying the name to be used to store the result in
-#' the \code{\link{reducedDims}} of the output.
+#' the \code{\link[SingleCellExperiment]{reducedDims}} of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
 #' @param method estimation algorithm from the \code{sgdGMF} package used.
-#' See \link{sgdgmf.fit}.
+#' See \link[sgdGMF]{sgdgmf.fit}.
 #' @param sampling sub-sampling strategy to use if method = "sgd".
-#' See \link{sgdgmf.fit} from the \code{sgdGMF} package.
+#' See \link[sgdGMF]{sgdgmf.fit} from the \code{sgdGMF} package.
 #' @param control.init control parameters for the initialization, used in the
-#' \code{sgdGMF} package. See \link{sgdgmf.init} and \link{set.control.init}.
+#' \code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.init} and
+#' \link[sgdGMF]{set.control.init}.
 #' @param control.alg control parameters for the estimation, used in the
-#' \code{sgdGMF} package. See \link{sgdgmf.fit} and \link{set.control.alg}.
+#' \code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.fit} and
+#' \link[sgdGMF]{set.control.alg}.
 #' @param control.cv control parameters for the cross-validation, used in the
-#' \code{sgdGMF} package. See \link{sgdgmf.cv} and \link{set.control.cv}.
+#' \code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.cv} and
+#' \link[sgdGMF]{set.control.cv}.
 #' @param penalty ridge penalty added for the estimation of the parameters in
-#' the \code{sgdGMF} package. see \link{sgdgmf.fit}.
+#' the \code{sgdGMF} package. see \link[sgdGMF]{sgdgmf.fit}.
 #'
 #' @details
 #' sgdGMF uses sampling of the data to estimate the parameters, which can
@@ -74,8 +79,8 @@
 #' will change slightly across different runs.
 #' For full reproducibility, users should call \code{\link{set.seed}} prior to
 #' running \code{\link{runGMF}} with such algorithms.
-#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
-#' approximate algorithms by default.)
+#' (Note that this includes \code{BSPARAM=\link[BiocSingular]{bsparam}()},
+#' which uses approximate algorithms by default.)
 #'
 #' For feature selection and using alternative Experiments, see
 #' \code{\link{runGMF}}.
@@ -239,6 +244,7 @@ setMethod("calculateCVGMF", "SingleCellExperiment", function(x, ..., exprs_value
 
 #' @export
 #' @rdname runCVGMF
+#' @import QFeatures
 #' @importFrom stats gaussian
 setMethod("calculateCVGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL)
 {
@@ -258,6 +264,7 @@ setMethod("calculateCVGMF", "QFeatures", function(x, ..., exprs_values = NULL, d
 
 #' @export
 #' @rdname runCVGMF
+#' @importFrom methods as
 setMethod("runCVGMF", "SummarizedExperiment", function(x, ...)
 {
     warning("runCVGMF is only compatible with SingleCellExperiment. Therefore
@@ -287,6 +294,7 @@ setMethod("runCVGMF", "SingleCellExperiment", function(x, ...,
 
 #' @export
 #' @rdname runCVGMF
+#' @import QFeatures
 setMethod("runCVGMF", "QFeatures", function(x, ...,
                                           exprs_values = NULL,
                                           assay.type = NULL)

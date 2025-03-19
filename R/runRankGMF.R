@@ -2,11 +2,14 @@
 #'
 #' @param x For \code{calculateRankGMF}, a numeric matrix of expression counts or
 #' mass spectrometry intensities where rows are features and columns are cells.
-#' Alternatively, a \linkS4class{SummarizedExperiment} or
-#' \linkS4class{SingleCellExperiment} containing such a matrix.
+#' Alternatively, a \link[SummarizedExperiment]{SummarizedExperiment-class} or
+#' \link[SingleCellExperiment]{SingleCellExperiment-class} containing such a
+#' matrix.
 #'
-#' For \code{runRankGMF}, a \linkS4class{SummarizedExperiment},
-#' \linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
+#' For \code{runRankGMF}, a
+#' \link[SummarizedExperiment]{SummarizedExperiment-class},
+#' \link[SingleCellExperiment]{SingleCellExperiment-class} or
+#' \link[QFeatures]{QFeatures} object
 #' containing such a matrix.
 #' @param maxcomp Scalar indicating the maximal number of eigenvalues to
 #' compute.
@@ -30,12 +33,12 @@
 #' \code{x} contains the values of interest.
 #' @param scale Logical scalar, should the expression values be standardized?
 #' Not recommended for non-Gaussian data.
-#' @param BSPARAM A \linkS4class{BiocSingularParam} object specifying which
-#' algorithm should be used to perform the PCA.
-#' This is used in \code{runPCA} to put all information in the sample
-#' latent factors.
-#' @param BPPARAM A \linkS4class{BiocParallelParam} object specifying whether
-#' the cross-validation
+#' @param BSPARAM A \link[BiocSingular]{BiocSingularParam-class} object
+#' specifying which algorithm should be used to perform the PCA.
+#' This is used in \code{\link[scater]{runPCA}} to put all information in the
+#' sample latent factors.
+#' @param BPPARAM A \link[BiocParallel]{BiocParallelParam-class} object
+#' specifying whether the cross-validation
 #' should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and
 #' control.cv$nthreads are
 #' not specified, parallelization is enabled with nthreads = BPPARAM$workers.
@@ -47,15 +50,16 @@
 #' if \code{dimred} is specified.
 #' @param exprs_values Alias to \code{assay.type}.
 #' @param ... For the \code{calculateRankGMF} generic, additional arguments to
-#' pass to specific methods such as \link{sgdgmf.rank}.
+#' pass to specific methods such as \code{\link[sgdGMF]{sgdgmf.rank}}.
 #' For the SummarizedExperiment and SingleCellExperiment methods, additional
 #' arguments to pass to the ANY method.
 #'
-#' For \code{runRankGMF}, additional arguments to pass to \code{calculateRankGMF}.
+#' For \code{runRankGMF}, additional arguments to pass to
+#' \code{calculateRankGMF}.
 #' @param name String specifying the name to be used to store the result in
-#' the \code{\link{metadata}} of the output.
+#' the metadata of the output.
 #' @param transposed Logical scalar, is \code{x} transposed with cells in rows?
-#' @param method rank selection method, see \link{sgdgmf.rank}.
+#' @param method rank selection method, see \code{\link[sgdGMF]{sgdgmf.rank}}.
 #' @param normalize if TRUE, standardize the residual matrix for each feature.
 #' @details
 #' sgdGMF uses sampling of the data to estimate the parameters, which can
@@ -64,15 +68,16 @@
 #' will change slightly across different runs.
 #' For full reproducibility, users should call \code{\link{set.seed}} prior to
 #' running \code{runRankGMF} with such algorithms.
-#' (Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
-#' approximate algorithms by default.)
+#' (Note that this includes \code{BSPARAM=\link[BiocSingular]{bsparam}()},
+#' which uses approximate algorithms by default.)
 #'
 #' For feature selection and using alternative Experiments, see
 #' \code{\link{runGMF}}.
 #'
 #' @return
 #' A list containing the eigenvalues. If a
-#' \linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} was
+#' \link[SummarizedExperiment]{SummarizedExperiment-class} or
+#' \link[SingleCellExperiment]{SingleCellExperiment-class} was
 #' given as input, this is stored in the metadata of this object.
 #'
 #' @name runRankGMF
@@ -194,6 +199,7 @@ setMethod("calculateRankGMF", "SingleCellExperiment", function(x, ..., exprs_val
 
 #' @export
 #' @rdname runRankGMF
+#' @import QFeatures
 #' @importFrom stats gaussian
 setMethod("calculateRankGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
 {
@@ -210,6 +216,7 @@ setMethod("calculateRankGMF", "QFeatures", function(x, ..., exprs_values = NULL,
 
 #' @export
 #' @rdname runRankGMF
+#' @importFrom methods as
 setMethod("runRankGMF", "SummarizedExperiment", function(x, ...)
 {
     warning("runRankGMF is only compatible with SingleCellExperiment.
@@ -240,6 +247,7 @@ setMethod("runRankGMF", "SingleCellExperiment", function(x, ...,
 
 #' @export
 #' @rdname runRankGMF
+#' @import QFeatures
 setMethod("runRankGMF", "QFeatures", function(x, ...,
                                              exprs_values = NULL,
                                              assay.type = NULL)

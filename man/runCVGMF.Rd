@@ -78,8 +78,9 @@ runCVGMF(x, ...)
 or mass spectrometry intensities where rows are features and columns are
 cells.
 
-Alternatively, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
+Alternatively, a \link[SummarizedExperiment]{SummarizedExperiment-class},
+\link[SingleCellExperiment]{SingleCellExperiment-class} or
+\link[QFeatures]{QFeatures} object
 containing such a matrix.}
 
 \item{...}{For the \code{calculateCVGMF} generic, additional arguments to
@@ -120,33 +121,37 @@ Not recommended for non-Gaussian data.}
 
 \item{transposed}{Logical scalar, is \code{x} transposed with cells in rows?}
 
-\item{BSPARAM}{A \linkS4class{BiocSingularParam} object specifying which
-algorithm should be used to perform the PCA.
-This is used in \code{runPCA} to put all information in the sample latent
-factors.}
+\item{BSPARAM}{A \link[BiocSingular]{BiocSingularParam-class} object
+specifying which algorithm should be used to perform the PCA.
+This is used in \code{\link[scater]{runPCA}} to put all information in the
+sample latent factors.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying whether
+\item{BPPARAM}{A \link[BiocParallel]{BiocParallelParam-class} object
+specifying whether
 the cross-validation should be parallelized. If BPPARAM$workers > 1 and
 control.cv$parallel and control.cv$nthreads are
 not specified, parallelization is enabled with nthreads = BPPARAM$workers.}
 
 \item{control.init}{control parameters for the initialization, used in the
-\code{sgdGMF} package. See \link{sgdgmf.init} and \link{set.control.init}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.init} and
+\link[sgdGMF]{set.control.init}.}
 
 \item{control.alg}{control parameters for the estimation, used in the
-\code{sgdGMF} package. See \link{sgdgmf.fit} and \link{set.control.alg}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.fit} and
+\link[sgdGMF]{set.control.alg}.}
 
 \item{control.cv}{control parameters for the cross-validation, used in the
-\code{sgdGMF} package. See \link{sgdgmf.cv} and \link{set.control.cv}.}
+\code{sgdGMF} package. See \link[sgdGMF]{sgdgmf.cv} and
+\link[sgdGMF]{set.control.cv}.}
 
 \item{penalty}{ridge penalty added for the estimation of the parameters in
-the \code{sgdGMF} package. see \link{sgdgmf.fit}.}
+the \code{sgdGMF} package. see \link[sgdGMF]{sgdgmf.fit}.}
 
 \item{method}{estimation algorithm from the \code{sgdGMF} package used.
-See \link{sgdgmf.fit}.}
+See \link[sgdGMF]{sgdgmf.fit}.}
 
 \item{sampling}{sub-sampling strategy to use if method = "sgd".
-See \link{sgdgmf.fit} from the \code{sgdGMF} package.}
+See \link[sgdGMF]{sgdgmf.fit} from the \code{sgdGMF} package.}
 
 \item{exprs_values}{Alias to \code{assay.type}.}
 
@@ -163,7 +168,7 @@ if \code{dimred} is specified.}
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in
-the \code{\link{reducedDims}} of the output.}
+the \code{\link[SingleCellExperiment]{reducedDims}} of the output.}
 }
 \value{
 For \code{calculateCVGMF}, A table containing the summary statistics of
@@ -184,8 +189,8 @@ puts a random selection of values to missing. This means that the result
 will change slightly across different runs.
 For full reproducibility, users should call \code{\link{set.seed}} prior to
 running \code{\link{runGMF}} with such algorithms.
-(Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
-approximate algorithms by default.)
+(Note that this includes \code{BSPARAM=\link[BiocSingular]{bsparam}()},
+which uses approximate algorithms by default.)
 
 For feature selection and using alternative Experiments, see
 \code{\link{runGMF}}.

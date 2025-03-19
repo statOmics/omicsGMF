@@ -72,19 +72,23 @@ runRankGMF(x, ...)
 \arguments{
 \item{x}{For \code{calculateRankGMF}, a numeric matrix of expression counts or
 mass spectrometry intensities where rows are features and columns are cells.
-Alternatively, a \linkS4class{SummarizedExperiment} or
-\linkS4class{SingleCellExperiment} containing such a matrix.
+Alternatively, a \link[SummarizedExperiment]{SummarizedExperiment-class} or
+\link[SingleCellExperiment]{SingleCellExperiment-class} containing such a
+matrix.
 
-For \code{runRankGMF}, a \linkS4class{SummarizedExperiment},
-\linkS4class{SingleCellExperiment} or \link[QFeatures]{QFeatures} object
+For \code{runRankGMF}, a
+\link[SummarizedExperiment]{SummarizedExperiment-class},
+\link[SingleCellExperiment]{SingleCellExperiment-class} or
+\link[QFeatures]{QFeatures} object
 containing such a matrix.}
 
 \item{...}{For the \code{calculateRankGMF} generic, additional arguments to
-pass to specific methods such as \link{sgdgmf.rank}.
+pass to specific methods such as \code{\link[sgdGMF]{sgdgmf.rank}}.
 For the SummarizedExperiment and SingleCellExperiment methods, additional
 arguments to pass to the ANY method.
 
-For \code{runRankGMF}, additional arguments to pass to \code{calculateRankGMF}.}
+For \code{runRankGMF}, additional arguments to pass to
+\code{calculateRankGMF}.}
 
 \item{family}{The distribution family that is used for the estimation of
 the parameters.}
@@ -117,18 +121,18 @@ Not recommended for non-Gaussian data.}
 
 \item{transposed}{Logical scalar, is \code{x} transposed with cells in rows?}
 
-\item{BSPARAM}{A \linkS4class{BiocSingularParam} object specifying which
-algorithm should be used to perform the PCA.
-This is used in \code{runPCA} to put all information in the sample
-latent factors.}
+\item{BSPARAM}{A \link[BiocSingular]{BiocSingularParam-class} object
+specifying which algorithm should be used to perform the PCA.
+This is used in \code{\link[scater]{runPCA}} to put all information in the
+sample latent factors.}
 
-\item{BPPARAM}{A \linkS4class{BiocParallelParam} object specifying whether
-the cross-validation
+\item{BPPARAM}{A \link[BiocParallel]{BiocParallelParam-class} object
+specifying whether the cross-validation
 should be parallelized. If BPPARAM$workers > 1 and control.cv$parallel and
 control.cv$nthreads are
 not specified, parallelization is enabled with nthreads = BPPARAM$workers.}
 
-\item{method}{rank selection method, see \link{sgdgmf.rank}.}
+\item{method}{rank selection method, see \code{\link[sgdGMF]{sgdgmf.rank}}.}
 
 \item{normalize}{if TRUE, standardize the residual matrix for each feature.}
 
@@ -147,11 +151,12 @@ if \code{dimred} is specified.}
 containing the input data.}
 
 \item{name}{String specifying the name to be used to store the result in
-the \code{\link{metadata}} of the output.}
+the metadata of the output.}
 }
 \value{
 A list containing the eigenvalues. If a
-\linkS4class{SummarizedExperiment} or \linkS4class{SingleCellExperiment} was
+\link[SummarizedExperiment]{SummarizedExperiment-class} or
+\link[SingleCellExperiment]{SingleCellExperiment-class} was
 given as input, this is stored in the metadata of this object.
 }
 \description{
@@ -164,8 +169,8 @@ puts a random selection of values to missing. This means that the result
 will change slightly across different runs.
 For full reproducibility, users should call \code{\link{set.seed}} prior to
 running \code{runRankGMF} with such algorithms.
-(Note that this includes \code{BSPARAM=\link{bsparam}()}, which uses
-approximate algorithms by default.)
+(Note that this includes \code{BSPARAM=\link[BiocSingular]{bsparam}()},
+which uses approximate algorithms by default.)
 
 For feature selection and using alternative Experiments, see
 \code{\link{runGMF}}.
