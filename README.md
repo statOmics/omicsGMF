@@ -1,8 +1,8 @@
-# scSGDGMF
+# OmicsGMF
 
 
 
-scSGDGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensible default parameters for this package, and allows for further exploration of the results commonly used in the analysis of omics data. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. scSGDGMF allows for:
+OmicsGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensible default parameters for this package, and allows for further exploration of the results commonly used in the analysis of omics data. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. OmicsGMF allows for:
 
 - Dimensionality reduction directly on (single-cell) RNA-sequencing count data considering a Poisson or negative binomial family. Therefore, no prior normalization is needed as with conventional PCA.
 - Dimensionality reduction when dealing with missing data. This makes it suitable for (single-cell) proteomics data when considering a Gaussian family.
@@ -20,16 +20,16 @@ For more information, be sure to check out:
 To install the development version, run;
 
 ```{r 'install_dev', eval = FALSE}
-devtools::install_github("statOmics/scSGDGMF")
+devtools::install_github("statOmics/OmicsGMF")
 ```
 
 The installation should only take a few seconds.
 The dependencies of the package are listed in the DESCRIPTION file of the package.
 
-scSGDGMF is submitted to Bioconductor and should be soon available. 
+OmicsGMF is submitted to Bioconductor and should be soon available. 
 
 ## Issues and bug reports
 
-Please use https://github.com/statOmics/scSGDGMF/issues to submit issues, bug reports, and comments.
+Please use https://github.com/statOmics/OmicsGMF/issues to submit issues, bug reports, and comments.
 
 
