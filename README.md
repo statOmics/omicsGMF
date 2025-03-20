@@ -1,8 +1,8 @@
-# OmicsGMF
+# omicsGMF
 
 
 
-OmicsGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensible default parameters for this package, and allows for further exploration of the results commonly used in the analysis of omics data. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. OmicsGMF allows for:
+omicsGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensible default parameters for this package, and allows for further exploration of the results commonly used in the analysis of omics data. sgdGMF performs matrix factorization and dimensionality reduction for all members of the exponential family. It considers a stochastic gradient descent optimalization for computational efficiency. omicsGMF allows for:
 
 - Dimensionality reduction directly on (single-cell) RNA-sequencing count data considering a Poisson or negative binomial family. Therefore, no prior normalization is needed as with conventional PCA.
 - Dimensionality reduction when dealing with missing data. This makes it suitable for (single-cell) proteomics data when considering a Gaussian family.
@@ -11,7 +11,7 @@ OmicsGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensibl
 
 For more information, be sure to check out:
 - arXiv preprint on the technical manuscript of sgdGMF, applied to single-cell RNA-sequencing: https://arxiv.org/abs/2412.20509
-- bioRxiv preprint on OmicsGMF applied to proteomics data for dimensionality reduction and imputation of missing values:
+- bioRxiv preprint on omicsGMF applied to proteomics data for dimensionality reduction and imputation of missing values:
 
 
 
@@ -20,16 +20,16 @@ For more information, be sure to check out:
 To install the development version, run;
 
 ```{r 'install_dev', eval = FALSE}
-devtools::install_github("statOmics/OmicsGMF")
+devtools::install_github("statOmics/omicsGMF")
 ```
 
 The installation should only take a few seconds.
 The dependencies of the package are listed in the DESCRIPTION file of the package.
 
-OmicsGMF is submitted to Bioconductor and should be soon available. 
+omicsGMF is submitted to Bioconductor and should be soon available. 
 
 ## Issues and bug reports
 
-Please use https://github.com/statOmics/OmicsGMF/issues to submit issues, bug reports, and comments.
+Please use https://github.com/statOmics/omicsGMF/issues to submit issues, bug reports, and comments.
 
 
