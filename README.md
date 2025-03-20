@@ -11,7 +11,7 @@ OmicsGMF is a Bioconductor wrapper for the sgdGMF package. It introduces sensibl
 
 For more information, be sure to check out:
 - arXiv preprint on the technical manuscript of sgdGMF, applied to single-cell RNA-sequencing: https://arxiv.org/abs/2412.20509
-- bioRxiv preprint on sgdGMF applied to proteomics data for dimensionality reduction and imputation of missing values:
+- bioRxiv preprint on OmicsGMF applied to proteomics data for dimensionality reduction and imputation of missing values:
 
 
 
