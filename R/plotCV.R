@@ -46,7 +46,10 @@ NULL
                                by = list("Method" = x$method, "ncomp" = x$ncomp),
                                FUN = method)
 
-    ggplot(data = cv_summarized, aes(x = ncomp, y = x, col = Method, group = Method)) +
+    ggplot(data = cv_summarized, aes(x = .data$ncomp,
+                                     y = x,
+                                     col = .data$Method,
+                                     group = .data$Method)) +
         geom_point() +
         geom_line() +
         theme_bw() +

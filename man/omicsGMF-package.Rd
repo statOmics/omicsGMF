@@ -6,13 +6,13 @@
 \alias{omicsGMF-package}
 \title{omicsGMF: Dimensionality reduction of (single-cell) omics data in R using sgdGMF}
 \description{
-scSGDGMF is a Bioconductor wrapper for the sgdGMF \code{sgdGMF} package, which is a highly performant and fast matrix factorization tool that can be used for dimensionality reduction, visualization and imputation of omics data. It considers data from the general exponential family as input, and therefore suits the use of both RNA-seq (Poisson or Negative Binomial data) and proteomics data (Gaussian data). It does not require prior transformation of counts to the log-scale, because it rather optimizes the deviances from the data family specified. Also, it allows to correct for known sample-level and feature-level covariates, therefore enabling visualization and dimensionality reduction upon batch correction. Last but not least, it deals with missing values, and allows to impute these after matrix factorization, useful for proteomics data. This Bioconductor wrapper allows input of SummarizedExperiment or SingleCellExperiment classes.
+omicsGMF is a Bioconductor wrapper for the sgdGMF \code{sgdGMF} package, which is a highly performant and fast matrix factorization tool that can be used for dimensionality reduction, visualization and imputation of omics data. It considers data from the general exponential family as input, and therefore suits the use of both RNA-seq (Poisson or Negative Binomial data) and proteomics data (Gaussian data). It does not require prior transformation of counts to the log-scale, because it rather optimizes the deviances from the data family specified. Also, it allows to correct for known sample-level and feature-level covariates, therefore enabling visualization and dimensionality reduction upon batch correction. Last but not least, it deals with missing values, and allows to impute these after matrix factorization, useful for proteomics data. This Bioconductor wrapper allows input of SummarizedExperiment or SingleCellExperiment classes.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/statOmics/scSGDGMF}
-  \item Report bugs at \url{https://github.com/statOmics/scSGDGMF/issues}
+  \item \url{https://github.com/statOmics/omicsGMF}
+  \item Report bugs at \url{https://github.com/statOmics/omicsGMF/issues}
 }
 
 }
