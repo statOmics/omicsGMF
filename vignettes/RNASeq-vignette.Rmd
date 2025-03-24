@@ -199,7 +199,7 @@ matrix, parameter estimates, the optimization history of `sgdGMF` framework
 and many more are available in the `attributes`. See `runGMF` for all 
 outputs. 
 
-```{r}
+```{r, results = 'hide'}
 example_sce <- runGMF(example_sce, 
                       X = X, 
                       exprs_values="counts", 
@@ -212,6 +212,8 @@ names(attributes(reducedDim(example_sce, type = "GMF")))
 head(attr(reducedDim(example_sce, type = "GMF"), "rotation"))
 tail(attr(reducedDim(example_sce, type = "GMF"), "trace"))
 
+reducedDimNames(example_sce)
+head(reducedDim(example_sce))
 ```
 
 After computing the matrix factorization, one can visualize the results with 
@@ -221,8 +223,6 @@ same plot can be obtained using the wrapper function `plotGMF`.
 
 ```{r}
 plotReducedDim(example_sce, dimred = "GMF", colour_by = "Mutation_Status")
-reducedDimNames(example_sce)
-head(reducedDim(example_sce))
 ```
 
 

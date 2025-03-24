@@ -225,7 +225,7 @@ and many more are available in the `attributes`. See `runGMF` for all
 outputs. 
 
 
-```{r}
+```{r, results = 'hide'}
 example_sce <- runGMF(example_sce, 
                       exprs_values="logintensities", 
                       family = gaussian(), 
@@ -236,6 +236,9 @@ names(attributes(reducedDim(example_sce, type = "GMF")))
 head(attr(reducedDim(example_sce, type = "GMF"), "rotation"))
 tail(attr(reducedDim(example_sce, type = "GMF"), "trace"))
 
+
+reducedDimNames(example_sce)
+head(reducedDim(example_sce, type = "GMF"))
 ```
 
 
@@ -247,15 +250,13 @@ same plot can be obtained using the wrapper function `plotGMF`.
 
 
 ```{r}
-plotReducedDim(example_sce, dimred = "GMF")
-reducedDimNames(example_sce)
-head(reducedDim(example_sce, type = "GMF"))
+plotReducedDim(example_sce, dimred = "GMF", colour_by = "Batch")
 ```
 
 Finally, it is possible to impute the missing values with the mean estimates. 
 This can be done with the `imputeGMF` function:
 
-```{r}
+```{r, results = 'hide'}
 example_sce <- imputeGMF(example_sce, 
                          exprs_values = "logintensities", 
                          reducedDimName = "GMF",
