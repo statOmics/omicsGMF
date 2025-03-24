@@ -1,6 +1,6 @@
 # omicsGMF
 
-omicsGMF is a Bioconductor package that uses the sgdGMF-framework of the \code{sgdGMF} package for highly performant 
+omicsGMF is a Bioconductor package that uses the sgdGMF-framework of the sgdGMF package for highly performant 
     and fast matrix factorization that can be used for dimensionality reduction, visualization and imputation of omics
     data. It considers data from the general exponential family as input, and therefore suits the use of both RNA-seq
     (Poisson or Negative Binomial data) and proteomics data (Gaussian data). omicsGMF allows for:
