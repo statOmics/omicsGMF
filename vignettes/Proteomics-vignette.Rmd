@@ -34,16 +34,16 @@ missing values in a fast way, and therefore
 does not require log-transformation of RNA-seq data or imputation of proteomics
 data such as conventional PCA. It can perform model selection to optimize the 
 number of latent confounders, i.e. the dimensionality of the reduced space. 
-`omicsGMF` uses the `sgdGMF` package, but 
-provides easy wrappers for `SingleCellExperiment` and `SummarizedExperiment` 
+`omicsGMF` builds on the `sgdGMF` package, but 
+provides easy functions for `SingleCellExperiment` and `SummarizedExperiment` 
 classes, with adapted default values of the parameters for omics data.
 
-All details about the `sgdGMF` model, such as the adaptive learning rates,
+All details about the `sgdGMF` framework, such as the adaptive learning rates,
 exponential gradient averaging and subsampling of the data are 
-described in our preprint [@Castliglioni2024]. There, we show the use of 
-`sgdGMF` on single-cell RNA-seq data. In our other preprint [@Segers2025], 
-we show how this framework can be used to visualize and impute missing values 
-in (single-cell) proteomics data.
+described in our preprint [@Castliglioni2024]. There, we show the use of the
+`sgdGMF-framework` on single-cell RNA-seq data. In our other preprint 
+[@Segers2025], we show how `omicsGMF` can be used to visualize and impute 
+missing values in (single-cell) proteomics data.
 
 In this vignette, we show how `omicsGMF` can be easily used to obtain the
 dimensionality reduction of omics data, to visualize these samples and how to 
@@ -52,7 +52,8 @@ count or incomplete data, while remaining fast due to its stochastic
 optimization algorithms. In total, there are four main functions:
 
 1. `calculateCVGMF` performs cross-validation to determine the optimal number
-of latent confounders. These results can be visualized using `plotCV`. This avoids arbitrarily choosing `ncomponents`, but
+of latent confounders. These results can be visualized using `plotCV`. This 
+avoids arbitrarily choosing `ncomponents`, but
 requires some computational time. An alternative is `calculateRankGMF`, which
 performs an eigenvalue decomposition on the deviance residuals. This allows for
 model selection based on a scree plot using `plotRank`, for example using
@@ -123,9 +124,9 @@ A recommended step is to estimate the optimal dimensionality in the model
 by using cross-validation. This cross-validation masks a proportion of the
 values as missing, and tries to reconstruct these. Using the out-of-sample 
 deviances, one can estimate the optimal dimensionality of the latent space.
-This can be done with the `calculateCVGMF` function, which uses 
-\link{sgdgmf.cv} from the `sgdGMF` package. Although the `sgdGMF` package 
-allows great flexibility regarding the optimization algorithm is possible, 
+This can be done with the `calculateCVGMF` function, which builds on the 
+\link{sgdgmf.cv} function from the `sgdGMF` package. Although the `sgdGMF` 
+package allows great flexibility regarding the optimization algorithm, 
 sensible default values are here introduced for omics data. One
 should mainly choose the right distribution family (`family`) and the number
 of components in the dimensionality reduction for which the cross-validation is
@@ -181,8 +182,8 @@ when the goal is imputing missing values, all features should be used.
 `runGMF` returns the dimensionality
 reduction in the `reducedDim` argument of the `SingleCellExperiment`. 
 Additional information such as the `rotation` matrix, parameter estimates, 
-the optimization history of `sgdGMF` and many more are available in the 
-`attributes`. See \link{runGMF} for all outputs. 
+the optimization history of the `sgdGMF` framework and many more are available 
+in the `attributes`. See \link{runGMF} for all outputs. 
 
 ```{r}
 example_sce <- runGMF(example_sce, 
