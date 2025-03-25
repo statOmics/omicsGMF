@@ -1,8 +1,8 @@
 # omicsGMF
 
 <!-- badges: start -->
-[![GitHub issues](https://img.shields.io/github/issues/statOmics/omicsGMF)](https://github.com/statOmics/omicsGMF/issues)
-[![GitHub pulls](https://img.shields.io/github/issues-pr/statOmics/omicsGMF)](https://github.com/statOmics/omicsGMF/pulls)
+[![R-CMD-check-bioc](https://github.com/statOmics/msqrob2/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/statOmics/msqrob2/actions/workflows/check-bioc.yml)
+[![Codecov test coverage](https://codecov.io/gh/statOmics/msqrob2/branch/master/graph/badge.svg)](https://app.codecov.io/gh/statOmics/msqrob2?branch=master)
 <!-- badges: end -->
 
 
