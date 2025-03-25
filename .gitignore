@@ -4,3 +4,5 @@ vignettes/*.html
 .RData
 .Rhistory
 .DS_Store
+README.Rmd
+
