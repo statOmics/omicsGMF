@@ -26,26 +26,24 @@ library(knitr)
 
 # Introduction
 
-`omicsGMF` is an R package to perform generalized matrix factorization and 
-imputation of missing values, and
-can be used for dimensionality reduction and visualization of omics data.
-It deals with count data and missing values in 
-a fast way, and therefore does not require log-transformation of RNA-seq data 
-or prior imputation of proteomics data, such as conventional PCA. Further, it 
-can control for known sample- and feature covariates, and can therefore
-account for the variability of for example batch effects, which helps
-downstream analyses such as clustering. Also, `omicsGMF`
-allows for model selection to optimize the 
-number of latent confounders, i.e. the dimensionality of the reduced space. 
-In conclusion, `omicsGMF` serves as an alternative to PCA 
-when dealing with count or incomplete data and (technical) confounders while 
-remaining fast due to its stochastic optimization algorithms.
+`omicsGMF` is an R package for generalized matrix factorization and missing 
+value imputation in omics data. It is designed for dimensionality reduction and 
+visualization, specifically handling count data and missing values efficiently. 
+Unlike conventional PCA, `omicsGMF` does not require log-transformation of 
+RNA-seq data or prior imputation of proteomics data.
+
+A key advantage of `omicsGMF` is its ability to control for known sample- and 
+feature-level covariates, such as batch effects. This improves downstream 
+analyses like clustering. Additionally, omicsGMF includes model selection to 
+optimize the number of latent confounders, ensuring an optimal dimensionality 
+for analysis. Its stochastic optimization algorithms allow it to remain fast 
+while handling these complex data structures.
 
 `omicsGMF` builds on the `sgdGMF` framework provided in the `sgdGMF` CRAN 
-package, but provides easy functions for `SingleCellExperiment`, 
+package, and provides easy integration with `SingleCellExperiment`, 
 `SummarizedExperiment`,
 and `QFeature` classes, with adapted default values for the optimization 
-parameters when dealing with omics data.
+arguments when dealing with omics data.
 
 All details about the `sgdGMF` framework, such as the adaptive learning rates,
 exponential gradient averaging and subsampling of the data are 
@@ -54,10 +52,10 @@ described in our preprint [@Castiglione2024]. There, we show the use of the
 [@Segers2025], we show how `omicsGMF` can be used to visualize (single-cell) 
 proteomics data and impute missing values.
 
-In this vignette, we show how `omicsGMF` can be easily used to obtain the
-dimensionality reduction of omics data, while accounting for known 
-confounders. Further, we show how it can visualize these samples based on
-the dimensionality reduction. In total, there are four main functions:
+
+This vignette provides a step-by-step workflow for using `omicsGMF` for
+dimensionality reduction of omics data. The main function are:
+
 
 1. `runCVGMF` or `calculateCVGMF` performs cross-validation to determine the 
 optimal number of latent confounders. These results can be visualized using 
@@ -77,22 +75,21 @@ feature-level covariates.
 estimates of `runGMF`.
 
 
-We here show a standard workflow of `omicsGMF` on RNA-seq data.
+We here apply `omicsGMF` on RNA-seq data.
 
 
 # Package installation
 
 `sgdGMF` can be installed through CRAN.
-`omicsGMF` can be installed from Bioconductor with:
+`omicsGMF` can be installed from github, and will be soon available
+through Bioconductor.
 
 ```{r, eval=FALSE}
 if(!requireNamespace("sgdGMF", quietly = TRUE))
     install.packages("sgdGMF")
 
-if(!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+devtools::install_github("statOmics/omicsGMF")
 
-BiocManager::install("omicsGMF")
 ```
 
 
@@ -116,7 +113,8 @@ corrects for known confounders in the dimensionality reduction.
 
 First, we simulate a small dataset using the `scuttle` package. For sake of 
 exposition, we will further account for the `Treatment` covariate from the 
-`colData`. 
+`colData`. `omicsGMF` can internally correct for these treatment 
+effects, and therefore does not require prior correction with other tools.
 
 ```{r}
 example_sce <- mockSCE(ncells = 20, ngenes = 500)
@@ -142,15 +140,18 @@ dimensionality reduction (`exprs_values` or `assay.type`).
 Visualization of the cross-validation results can be done using 
 `plotCV`. In case that multiple cross-validation results are available in the 
 `metadata`, it is possible to visualize these by giving all names of the 
-metadata slots.
+metadata slots. The optimal dimensionality is the one that has the lowest 
+out-of-sample deviances.
 
 ```{r}
-example_sce <- runCVGMF(example_sce, 
-                        X = X,
-                        exprs_values="counts", 
-                        family = poisson(), 
-                        ncomponents = c(1:5),
-                        ntop = 500)
+example_sce <- runCVGMF(
+    example_sce, 
+    X = X,                   # Covariate matrix
+    exprs_values = "counts", # Use raw counts (no normalization)
+    family = poisson(),      # Poisson model for RNA-seq count data
+    ncomponents = 1:5,       # Test components from 1 to 5
+    ntop = 500               # Use top 500 most variable genes
+)             
 
 metadata(example_sce)$cv_GMF %>% 
     group_by(ncomp) %>% 
@@ -165,22 +166,24 @@ plotCV(example_sce, name = "cv_GMF")
 ```
 
 
-If data are very large, or when having no idea which range of cross-validation 
-values to explore, one can also use a scree plot of the eigenvalues for model
-selection. This approach uses PCA on the deviance residuals to obtain the
-eigenvalues, which is an approximation to the real matrix factorization.
+If the dataset is large or you are unsure about the optimal range of components 
+to test, an alternative is the scree plot approach. This method uses PCA on 
+deviance residuals to estimate eigenvalues, providing a fast approximation of 
+the optimal dimensionality.
+
 This can be done using `runRankGMF` or `calculateRankGMF` followed
 by `plotRank` or `screeplot_rank` respectively. Note that now, the 
-`maxcomp` parameter can be defined, which is the number of 
+`maxcomp` argument can be defined, which is the number of 
 eigenvalues computed.
 
 ```{r}
-example_sce <- runRankGMF(example_sce, 
-                          X = X, 
-                          exprs_values="counts", 
-                          family = poisson(), 
-                          maxcomp = 10,
-                          ntop = 500)
+example_sce <- runRankGMF(
+    example_sce, 
+    X = X, 
+    exprs_values="counts", 
+    family = poisson(), 
+    maxcomp = 10,
+    ntop = 500)
 
 plotRank(example_sce, maxcomp = 10)
 ```
@@ -190,36 +193,41 @@ After choosing the number of components to use in the final dimensionality
 reduction, `runGMF` or `calculateGMF` can be used. Again, one should select the
 distribution family (`family`), the dimensionality (`ncomponents`), 
 the known covariate matrices to account for (`X` and `Z`) and the 
-assay used (`exprs_values` or `assay.type`). Note that, differently compared to
-`runPCA`, by default all features are used. If this is not wanted, one can 
-for example choose the n most variable genes used with `ntop`. 
-`runGMF` returns the dimensionality reduction in the `reducedDim` argument of 
-the `SingleCellExperiment`. Additional information such as the `rotation` 
+assay used (`exprs_values` or `assay.type`). Unlike `runPCA`, `runGMF` uses all 
+features by default. If you want to select the most variable genes instead, 
+set `ntop`. The results are stored in the `reducedDim` slot of the 
+`SingleCellExperiment` object. Additional information such as the `rotation` 
 matrix, parameter estimates, the optimization history of `sgdGMF` framework 
 and many more are available in the `attributes`. See `runGMF` for all 
 outputs. 
 
+```{r}
+example_sce <- runGMF(
+    example_sce, 
+    X = X, 
+    exprs_values="counts", 
+    family = poisson(), 
+    ncomponents = 3, # Use optimal dimensionality, here arbitrarily chosen as 3
+    ntop = 500,
+    name = "GMF")
+```
+
+
 ```{r, results = 'hide'}
-example_sce <- runGMF(example_sce, 
-                      X = X, 
-                      exprs_values="counts", 
-                      family = poisson(), 
-                      ncomponents = 3,
-                      ntop = 500,
-                      name = "GMF")
+reducedDimNames(example_sce)
+head(reducedDim(example_sce))
 
 names(attributes(reducedDim(example_sce, type = "GMF")))
 head(attr(reducedDim(example_sce, type = "GMF"), "rotation"))
 tail(attr(reducedDim(example_sce, type = "GMF"), "trace"))
 
-reducedDimNames(example_sce)
-head(reducedDim(example_sce))
 ```
 
-After computing the matrix factorization, one can visualize the results with 
-functions from the `scater` package. For example, using `plotReducedDim`, 
-one obtains a PCA plot, using the latent factors obtained by `omicsGMF`. The 
-same plot can be obtained using the wrapper function `plotGMF`.
+
+To visualize the reduced dimensions, you can use `plotReducedDim` from the 
+`scater` package, specifying "GMF" as the dimension reduction method. 
+Alternatively, the `plotGMF` function provides a direct wrapper for this.
+
 
 ```{r}
 plotReducedDim(example_sce, dimred = "GMF", colour_by = "Mutation_Status")
