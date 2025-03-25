@@ -1,5 +1,11 @@
 # omicsGMF
 
+<!-- badges: start -->
+[![GitHub issues](https://img.shields.io/github/issues/statOmics/omicsGMF)](https://github.com/statOmics/omicsGMF/issues)
+[![GitHub pulls](https://img.shields.io/github/issues-pr/statOmics/omicsGMF)](https://github.com/statOmics/omicsGMF/pulls)
+<!-- badges: end -->
+
+
 omicsGMF is a Bioconductor package that uses the sgdGMF-framework of the sgdGMF package for highly performant 
     and fast matrix factorization that can be used for dimensionality reduction, visualization and imputation of omics
     data. It considers data from the general exponential family as input, and therefore suits the use of both RNA-seq
