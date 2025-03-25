@@ -1,6 +1,6 @@
 # Creating a mock SingleCellExperiment
 set.seed(100)
-library(scSGDGMF)
+library(omicsGMF)
 
 sce <- scuttle::mockSCE(ncells = 200, ngenes = 100)
 

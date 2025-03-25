@@ -19,7 +19,7 @@ plotRank(x, ..., name = "rank_GMF")
 }
 \arguments{
 \item{x}{Output of \code{\link[sgdGMF]{sgdgmf.rank}},
- \code{\link{calculateRankGMF}} or
+\code{\link{calculateRankGMF}} or
 \code{\link{runRankGMF}}.}
 
 \item{...}{For the \code{screeplot_rank} generic, additional arguments to
