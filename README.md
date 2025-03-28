@@ -17,7 +17,7 @@ omicsGMF is a Bioconductor package that uses the sgdGMF-framework of the sgdGMF 
 - Imputation of missing values by the estimated means, which also take into account the known covariates.
 
 For more information, be sure to check out:
-- bioRxiv preprint on omicsGMF applied to proteomics data for dimensionality reduction and imputation of missing values:
+- bioRxiv preprint on omicsGMF applied to proteomics data for dimensionality reduction and imputation of missing values: https://doi.org/10.1101/2025.03.24.644996
 - arXiv preprint on the technical manuscript of sgdGMF framework, applied to single-cell RNA-sequencing: https://arxiv.org/abs/2412.20509
 
 
