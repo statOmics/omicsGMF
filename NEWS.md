@@ -1,5 +1,9 @@
 # omicsGMF 0.99.3
 
+* Version bump
+
+# omicsGMF 0.99.3
+
 * Minor changes
 
 # omicsGMF 0.99.2
