@@ -17,14 +17,14 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Alexandre Segers \email{alexandresegers@outlook.com}
+\strong{Maintainer}: Alexandre Segers \email{alexandresegers@outlook.com} [funder]
 
 Other contributors:
 \itemize{
   \item Cristian Castiglione \email{cristian.castiglione@unipd.it} [contributor]
   \item Christophe Vanderaa \email{christophe.vanderaa@ugent.be} [contributor]
-  \item Davide Risso \email{davide.risso@unipd.it} [contributor]
-  \item Lieven Clement \email{lieven.clement@ugent.be} [contributor]
+  \item Davide Risso \email{davide.risso@unipd.it} [contributor, funder]
+  \item Lieven Clement \email{lieven.clement@ugent.be} [contributor, funder]
 }
 
 }
