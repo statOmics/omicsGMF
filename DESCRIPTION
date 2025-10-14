@@ -1,11 +1,11 @@
 Package: omicsGMF
 Type: Package
 Authors@R: c(
-        person("Alexandre", "Segers", role=c("aut", "cre"), email="alexandresegers@outlook.com"),
+        person("Alexandre", "Segers", role=c("aut", "cre", "fnd"), email="alexandresegers@outlook.com"),
         person("Cristian", "Castiglione", role=c("ctb"), email="cristian.castiglione@unipd.it"),
         person("Christophe", "Vanderaa", role = c("ctb"), email="christophe.vanderaa@ugent.be"),
-        person("Davide", "Risso", role=c("ctb"), email="davide.risso@unipd.it"),
-        person("Lieven", "Clement", role=c("ctb"), email="lieven.clement@ugent.be")
+        person("Davide", "Risso", role=c("ctb", "fnd"), email="davide.risso@unipd.it"),
+        person("Lieven", "Clement", role=c("ctb", "fnd"), email="lieven.clement@ugent.be")
 	)
 Version: 0.99.1
 Date: 2025-01-14
@@ -23,7 +23,8 @@ biocViews: SingleCell, RNASeq, Proteomics, QualityControl, Preprocessing,
         Normalization, Visualization, DimensionReduction, Transcriptomics,
         GeneExpression, Sequencing, Software,
         DataRepresentation, MassSpectrometry
-Depends: 
+Depends:
+    R (>= 4.0.0),
     sgdGMF,
     SingleCellExperiment,
     scuttle,
@@ -59,3 +60,9 @@ Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Funding: This work was supported by grants from Ghent University Special Research Fund [BOF20/GOA/023] (A.S., L.C.),
+    Research Foundation Flanders [FWO G062219N] (A.S., L.C.) and as WOG [W005325N] (L.C.). This work was supported by EU 
+    funding within the MUR PNRR ``National Center for HPC, big data and quantum computing'' (Project no. CN00000013 CN1). 
+    D.R. was also supported by the National Cancer Institute of the National Institutes of Health (U24CA289073). The 
+    views and opinions expressed are only those of the authors and do not necessarily reflect those of the European Union 
+    or the European Commission. Neither the European Union nor the European Commission can be held responsible for them.

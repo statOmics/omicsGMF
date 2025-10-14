@@ -300,11 +300,6 @@ NULL
         do.call(".set.control.csgd",
                 append(list("dimrow" = nrow(x), "dimcol" = ncol(x)), control.alg))
 
-    # if (method == "airwls") control.alg = do.call("set.control.airwls", control.alg)
-    # if (method == "newton") control.alg = do.call("set.control.newton", control.alg)
-    # if (method == "msgd") control.alg = do.call("set.control.msgd", control.alg)
-    # if (method == "rsgd") control.alg = do.call("set.control.rsgd", control.alg)
-
     if(crossval){
         control.cv <- do.call(sgdGMF::set.control.cv, control.cv)
 
@@ -397,7 +392,7 @@ setMethod("calculateGMF", "SummarizedExperiment", function(x, ..., exprs_values=
 setMethod("calculateGMF", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
 
-    mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) #TODO: is needed for as.matrix? What with delayarray? What with offset?
+    mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) 
     .checkfamily(mat, family)
     .calculate_gmf(mat, family, transposed=!is.null(dimred), ...)
 })
@@ -405,7 +400,7 @@ setMethod("calculateGMF", "SingleCellExperiment", function(x, ..., exprs_values=
 
 #' @export
 #' @rdname runGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 #' @importFrom stats gaussian
 setMethod("calculateGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
 {
@@ -452,7 +447,7 @@ setMethod("runGMF", "SingleCellExperiment", function(x, ...,
 
 #' @export
 #' @rdname runGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 setMethod("runGMF", "QFeatures", function(x, ...,
                                           exprs_values = NULL,
                                           assay.type = NULL)

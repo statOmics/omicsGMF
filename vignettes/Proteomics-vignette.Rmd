@@ -89,8 +89,7 @@ through Bioconductor.
 if(!requireNamespace("sgdGMF", quietly = TRUE))
     install.packages("sgdGMF")
 
-devtools::install_github("statOmics/omicsGMF")
-
+BiocManager::install("omicsGMF")
 ```
 
 
@@ -110,7 +109,7 @@ log-transformed intensities, which makes the data Gaussian distributed.
 Optionally, one can opt to perform normalization such as median-normalization,
 although this is not required, but might enhance numerical stability and 
 convergence speed. For proteomics data, `family = gaussian()` should be used 
-in the data analyis, and missing values should not be imputed prior to the 
+in the data analysis, and missing values should not be imputed prior to the 
 matrix factorization as omicsGMF deals with these internally. If the goal is to 
 impute missing values after matrix decomposition, one should include all 
 features in the analysis, therefore ignoring the `ntop` argument.

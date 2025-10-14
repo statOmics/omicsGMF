@@ -21,7 +21,7 @@ runCVGMF(x, ...)
 \S4method{calculateCVGMF}{ANY}(
   x,
   family = gaussian(),
-  ncomponents = 1:10,
+  ncomponents = seq(1, 10, 1),
   ntop = NULL,
   X = NULL,
   Z = NULL,

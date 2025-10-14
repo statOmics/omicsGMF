@@ -108,7 +108,6 @@ NULL
                               BSPARAM = bsparam(), BPPARAM = SerialParam(),
                               method = "oht", normalize = FALSE, ...
                               )
-    #TODO: ask Cristian upon default of method = "oht"
 {
     # For DelayedArray's parallelized rowVars/colVars.
     oldbp <- getAutoBPPARAM()
@@ -192,14 +191,14 @@ setMethod("calculateRankGMF", "SummarizedExperiment", function(x, ..., exprs_val
 #' @importFrom stats gaussian
 setMethod("calculateRankGMF", "SingleCellExperiment", function(x, ..., exprs_values=1, dimred=NULL, n_dimred=NULL, assay.type=exprs_values, family = gaussian())
 {
-    mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) # TODO: check if needed & for dellayarray
+    mat <- as.matrix(scater:::.get_mat_from_sce(x, assay.type=assay.type, dimred=dimred, n_dimred=n_dimred)) 
     .checkfamily(mat, family)
     .calculate_gmf_rank(mat, family, transposed=!is.null(dimred), ...)
 })
 
 #' @export
 #' @rdname runRankGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 #' @importFrom stats gaussian
 setMethod("calculateRankGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL, family = gaussian())
 {
@@ -247,7 +246,7 @@ setMethod("runRankGMF", "SingleCellExperiment", function(x, ...,
 
 #' @export
 #' @rdname runRankGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 setMethod("runRankGMF", "QFeatures", function(x, ...,
                                              exprs_values = NULL,
                                              assay.type = NULL)

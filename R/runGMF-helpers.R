@@ -2,13 +2,10 @@
     if (!all(mat == floor(mat)) & family$family %in% c("poisson", "nb", "negbin")){
         warning("Family is poisson or negative binomial, while assay is not full of integers. Consider changing the assay used or changing the family to gaussian()")
     }
-    # if (all(mat == floor(mat)) & family$family == "gaussian"){
-    #     warning("Family is gaussian, while assay is full of integers. Consider using poisson() or other families.")
-    # }
 }
 
 # Set the control parameters of the initialization to the default for omics data.
-.set.control.init = function (
+.set.control.init <- function (
         method = c("ols", "glm", "random", "values"),
         type = c("link", "deviance", "pearson", "working"),
         values = list(),
@@ -18,35 +15,35 @@
         parallel = FALSE,
         nthreads = 1
 ) {
-    ctr = list()
-    ctr$method = match.arg(method)
-    ctr$type = match.arg(type)
-    ctr$values = list()
-    ctr$niter = 5
-    ctr$normalize = TRUE
-    ctr$verbose = FALSE
-    ctr$parallel = FALSE
-    ctr$nthreads = 1
+    ctr <- list()
+    ctr$method <- match.arg(method)
+    ctr$type <- match.arg(type)
+    ctr$values <- list()
+    ctr$niter <- 5
+    ctr$normalize <- TRUE
+    ctr$verbose <- FALSE
+    ctr$parallel <- FALSE
+    ctr$nthreads <- 1
 
-    message = function (var)
-        warning(paste0("Init. control: '", var,"' was set to default value."),
+    message <- function (var)
+        warning("Init. control: '", var,"' was set to default value.",
                 call. = FALSE, immediate. = TRUE, domain = NULL)
 
-    if (is.numeric(niter) && niter > 0) ctr$niter = floor(niter) else message("niter")
-    if (is.logical(normalize)) ctr$normalize = normalize else message("normalize")
-    if (is.logical(verbose)) ctr$verbose = verbose else message("verbose")
-    if (is.logical(parallel)) ctr$parallel = parallel else message("parallel")
-    if (is.numeric(nthreads) && nthreads > 0) ctr$nthreads = floor(nthreads) else message("nthreads")
+    if (is.numeric(niter) && niter > 0) ctr$niter <- floor(niter) else message("niter")
+    if (is.logical(normalize)) ctr$normalize <- normalize else message("normalize")
+    if (is.logical(verbose)) ctr$verbose <- verbose else message("verbose")
+    if (is.logical(parallel)) ctr$parallel <- parallel else message("parallel")
+    if (is.numeric(nthreads) && nthreads > 0) ctr$nthreads <- floor(nthreads) else message("nthreads")
 
     if (is.list(values)) {
         if (length(values) > 0) {
             if (all(c("B", "A", "U", "V") %in% names(values))) {
-                if (is.numeric(values$B) && is.matrix(values$B)) ctr$values$B = values$B
-                if (is.numeric(values$A) && is.matrix(values$A)) ctr$values$A = values$A
-                if (is.numeric(values$U) && is.matrix(values$U)) ctr$values$U = values$U
-                if (is.numeric(values$V) && is.matrix(values$V)) ctr$values$V = values$V
+                if (is.numeric(values$B) && is.matrix(values$B)) ctr$values$B <- values$B
+                if (is.numeric(values$A) && is.matrix(values$A)) ctr$values$A <- values$A
+                if (is.numeric(values$U) && is.matrix(values$U)) ctr$values$U <- values$U
+                if (is.numeric(values$V) && is.matrix(values$V)) ctr$values$V <- values$V
             } else {
-                values = list()
+                values <- list()
             }
         }
     }
@@ -58,7 +55,7 @@
 
 
 # Set the control parameters of the block-wise subsampling to the default for omics data.
-.set.control.bsgd = function (
+.set.control.bsgd <- function (
         dimrow,
         dimcol,
         normalize = TRUE,
@@ -80,51 +77,51 @@
 ) {
 
     # Set the default control parameters
-    ctr = list()
-    ctr$normalize = TRUE
-    ctr$maxiter = max(round(dimrow*5 / min(dimrow, max(round(dimrow/10000,0), 100)),0), 10000)
-    ctr$eps = 1e-08
-    ctr$nafill = 1
-    ctr$tol = 0.001
-    ctr$size = c(min(dimrow, max(round(dimrow/10000,0), 100)),
+    ctr <- list()
+    ctr$normalize <- TRUE
+    ctr$maxiter <- max(round(dimrow*5 / min(dimrow, max(round(dimrow/10000,0), 100)),0), 10000)
+    ctr$eps <- 1e-08
+    ctr$nafill <- 1
+    ctr$tol <- 0.001
+    ctr$size <- c(min(dimrow, max(round(dimrow/10000,0), 100)),
                  min(dimcol,max(round(dimcol/5,0), 100)))
-    ctr$burn = 1
-    ctr$rate0 = 0.01
-    ctr$decay = 0.01
-    ctr$damping = 1e-03
-    ctr$rate1 = 0.1
-    ctr$rate2 = 0.01
-    ctr$verbose = FALSE
-    ctr$frequency = 250
-    ctr$progress = FALSE
+    ctr$burn <- 1
+    ctr$rate0 <- 0.01
+    ctr$decay <- 0.01
+    ctr$damping <- 1e-03
+    ctr$rate1 <- 0.1
+    ctr$rate2 <- 0.01
+    ctr$verbose <- FALSE
+    ctr$frequency <- 250
+    ctr$progress <- FALSE
 
-    message = function (var)
-        warning(paste0("B-SGD control: '", var,"' was set to default value."),
+    message <- function (var)
+        warning("B-SGD control: '", var,"' was set to default value.",
                 call. = FALSE, immediate. = TRUE, domain = NULL)
 
     # Standard safety checks
-    if (is.logical(normalize)) ctr$normalize = normalize else message("normalize")
-    if (is.numeric(maxiter) && maxiter >= 1) ctr$maxiter = floor(maxiter) else message("maxiter")
-    if (is.numeric(eps) && eps > 0) ctr$eps = eps else message("eps")
-    if (is.numeric(nafill) && nafill >= 1) ctr$nafill = floor(nafill) else message("nafill")
-    if (is.numeric(tol) && tol > 0) ctr$tol = tol else message("tol")
-    if (is.numeric(size) & all(size >= 1)) ctr$size = floor(size[1:2]) else message("size")
-    if (is.numeric(burn) && burn > 0 && burn <= 1) ctr$burn = burn else message("burn")
-    if (is.numeric(rate0) && rate0 > 0) ctr$rate0 = rate0 else message("rate0")
-    if (is.numeric(decay) && decay > 0) ctr$decay = decay else message("decay")
-    if (is.numeric(damping) && damping > 0) ctr$damping = damping else message("damping")
-    if (is.numeric(rate1) && rate1 > 0) ctr$rate1 = rate1 else message("rate1")
-    if (is.numeric(rate2) && rate2 > 0) ctr$rate2 = rate2 else message("rate2")
-    if (is.logical(verbose)) ctr$verbose = verbose else message("verbose")
-    if (is.numeric(frequency) && frequency >= 1) ctr$frequency = floor(frequency) else message("frequency")
-    if (is.logical(progress)) ctr$progress = progress else message("progress")
+    if (is.logical(normalize)) ctr$normalize <- normalize else message("normalize")
+    if (is.numeric(maxiter) && maxiter >= 1) ctr$maxiter <- floor(maxiter) else message("maxiter")
+    if (is.numeric(eps) && eps > 0) ctr$eps <- eps else message("eps")
+    if (is.numeric(nafill) && nafill >= 1) ctr$nafill <- floor(nafill) else message("nafill")
+    if (is.numeric(tol) && tol > 0) ctr$tol <- tol else message("tol")
+    if (is.numeric(size) & all(size >= 1)) ctr$size <- floor(size[1:2]) else message("size")
+    if (is.numeric(burn) && burn > 0 && burn <= 1) ctr$burn <- burn else message("burn")
+    if (is.numeric(rate0) && rate0 > 0) ctr$rate0 <- rate0 else message("rate0")
+    if (is.numeric(decay) && decay > 0) ctr$decay <- decay else message("decay")
+    if (is.numeric(damping) && damping > 0) ctr$damping <- damping else message("damping")
+    if (is.numeric(rate1) && rate1 > 0) ctr$rate1 <- rate1 else message("rate1")
+    if (is.numeric(rate2) && rate2 > 0) ctr$rate2 <- rate2 else message("rate2")
+    if (is.logical(verbose)) ctr$verbose <- verbose else message("verbose")
+    if (is.numeric(frequency) && frequency >= 1) ctr$frequency <- floor(frequency) else message("frequency")
+    if (is.logical(progress)) ctr$progress <- progress else message("progress")
 
     # Additional consistency checks
-    if (ctr$nafill > ctr$maxiter) {ctr$nafill = ctr$maxiter; message("nafill")}
-    if (ctr$eps > 1e-01) {ctr$eps = 1e-01; message("eps")}
-    if (ctr$rate1 > 1 - 1e-08) {ctr$rate1 = 1 - 1e-08; message("rate1")}
-    if (ctr$rate2 > 1 - 1e-08) {ctr$rate2 = 1 - 1e-08; message("rate2")}
-    if (ctr$frequency > ctr$maxiter) {ctr$frequency = ctr$maxiter; message("frequency")}
+    if (ctr$nafill > ctr$maxiter) {ctr$nafill <- ctr$maxiter; message("nafill")}
+    if (ctr$eps > 1e-01) {ctr$eps <- 1e-01; message("eps")}
+    if (ctr$rate1 > 1 - 1e-08) {ctr$rate1 <- 1 - 1e-08; message("rate1")}
+    if (ctr$rate2 > 1 - 1e-08) {ctr$rate2 <- 1 - 1e-08; message("rate2")}
+    if (ctr$frequency > ctr$maxiter) {ctr$frequency <- ctr$maxiter; message("frequency")}
 
     # Return the check control parameters
     return (ctr)
@@ -133,7 +130,7 @@
 
 
 # Set the control parameters of the coordinate subsampling to the default for omics data.
-.set.control.csgd = function (
+.set.control.csgd <- function (
         dimrow,
         dimcol,
         normalize = TRUE,
@@ -155,51 +152,51 @@
 ) {
 
     # Set the default control parameters
-    ctr = list()
-    ctr$normalize = TRUE
-    ctr$maxiter = max(1000, dimrow*dimcol/(min(dimrow, max(round(dimrow/10000,0), 100))*min(dimcol,max(round(dimcol/5,0), 100))))
-    ctr$eps = 1e-08
-    ctr$nafill = 1
-    ctr$tol = 0.001
-    ctr$size = c(min(dimrow, max(round(dimrow/10000,0), 100)),
+    ctr <- list()
+    ctr$normalize <- TRUE
+    ctr$maxiter <- max(1000, dimrow*dimcol/(min(dimrow, max(round(dimrow/10000,0), 100))*min(dimcol,max(round(dimcol/5,0), 100))))
+    ctr$eps <- 1e-08
+    ctr$nafill <- 1
+    ctr$tol <- 0.001
+    ctr$size <- c(min(dimrow, max(round(dimrow/10000,0), 100)),
                  min(dimcol,max(round(dimcol/5,0), 100)))
-    ctr$burn = 1
-    ctr$rate0 = 0.01
-    ctr$decay = 0.01
-    ctr$damping = 1e-03
-    ctr$rate1 = 0.1
-    ctr$rate2 = 0.01
-    ctr$verbose = FALSE
-    ctr$frequency = 250
-    ctr$progress = FALSE
+    ctr$burn <- 1
+    ctr$rate0 <- 0.01
+    ctr$decay <- 0.01
+    ctr$damping <- 1e-03
+    ctr$rate1 <- 0.1
+    ctr$rate2 <- 0.01
+    ctr$verbose <- FALSE
+    ctr$frequency <- 250
+    ctr$progress <- FALSE
 
-    message = function (var)
-        warning(paste0("C-SGD control: '", var,"' was set to default value."),
+    message <- function (var)
+        warning("C-SGD control: '", var,"' was set to default value.",
                 call. = FALSE, immediate. = TRUE, domain = NULL)
 
     # Standard safety checks
-    if (is.logical(normalize)) ctr$normalize = normalize else message("normalize")
-    if (is.numeric(maxiter) && maxiter >= 1) ctr$maxiter = floor(maxiter) else message("maxiter")
-    if (is.numeric(eps) && eps > 0) ctr$eps = eps else message("eps")
-    if (is.numeric(nafill) && nafill >= 1) ctr$nafill = floor(nafill) else message("nafill")
-    if (is.numeric(tol) && tol > 0) ctr$tol = tol else message("tol")
-    if (is.numeric(size) & all(size >= 1)) ctr$size = floor(size[1:2]) else message("size")
-    if (is.numeric(burn) && burn > 0 && burn <= 1) ctr$burn = burn else message("burn")
-    if (is.numeric(rate0) && rate0 > 0) ctr$rate0 = rate0 else message("rate0")
-    if (is.numeric(decay) && decay > 0) ctr$decay = decay else message("decay")
-    if (is.numeric(damping) && damping > 0) ctr$damping = damping else message("damping")
-    if (is.numeric(rate1) && rate1 > 0) ctr$rate1 = rate1 else message("rate1")
-    if (is.numeric(rate2) && rate2 > 0) ctr$rate2 = rate2 else message("rate2")
-    if (is.logical(verbose)) ctr$verbose = verbose else message("verbose")
-    if (is.numeric(frequency) && frequency >= 1) ctr$frequency = floor(frequency) else message("frequency")
-    if (is.logical(progress)) ctr$progress = progress else message("progress")
+    if (is.logical(normalize)) ctr$normalize <- normalize else message("normalize")
+    if (is.numeric(maxiter) && maxiter >= 1) ctr$maxiter <- floor(maxiter) else message("maxiter")
+    if (is.numeric(eps) && eps > 0) ctr$eps <- eps else message("eps")
+    if (is.numeric(nafill) && nafill >= 1) ctr$nafill <- floor(nafill) else message("nafill")
+    if (is.numeric(tol) && tol > 0) ctr$tol <- tol else message("tol")
+    if (is.numeric(size) & all(size >= 1)) ctr$size <- floor(size[1:2]) else message("size")
+    if (is.numeric(burn) && burn > 0 && burn <= 1) ctr$burn <- burn else message("burn")
+    if (is.numeric(rate0) && rate0 > 0) ctr$rate0 <- rate0 else message("rate0")
+    if (is.numeric(decay) && decay > 0) ctr$decay <- decay else message("decay")
+    if (is.numeric(damping) && damping > 0) ctr$damping <- damping else message("damping")
+    if (is.numeric(rate1) && rate1 > 0) ctr$rate1 <- rate1 else message("rate1")
+    if (is.numeric(rate2) && rate2 > 0) ctr$rate2 <- rate2 else message("rate2")
+    if (is.logical(verbose)) ctr$verbose <- verbose else message("verbose")
+    if (is.numeric(frequency) && frequency >= 1) ctr$frequency <- floor(frequency) else message("frequency")
+    if (is.logical(progress)) ctr$progress <- progress else message("progress")
 
     # Additional consistency checks
-    if (ctr$nafill > ctr$maxiter) {ctr$nafill = ctr$maxiter; message("nafill")}
-    if (ctr$eps > 1e-01) {ctr$eps = 1e-01; message("eps")}
-    if (ctr$rate1 > 1 - 1e-08) {ctr$rate1 = 1 - 1e-08; message("rate1")}
-    if (ctr$rate2 > 1 - 1e-08) {ctr$rate2 = 1 - 1e-08; message("rate2")}
-    if (ctr$frequency > ctr$maxiter) {ctr$frequency = ctr$maxiter; message("frequency")}
+    if (ctr$nafill > ctr$maxiter) {ctr$nafill <- ctr$maxiter; message("nafill")}
+    if (ctr$eps > 1e-01) {ctr$eps <- 1e-01; message("eps")}
+    if (ctr$rate1 > 1 - 1e-08) {ctr$rate1 <- 1 - 1e-08; message("rate1")}
+    if (ctr$rate2 > 1 - 1e-08) {ctr$rate2 <- 1 - 1e-08; message("rate2")}
+    if (ctr$frequency > ctr$maxiter) {ctr$frequency <- ctr$maxiter; message("frequency")}
 
     # Return the check control parameters
     return (ctr)
@@ -237,9 +234,9 @@
     # Finally, transposing for downstream use (cells are now rows).
 {
 
-    use.var <- (is.null(subset_row) || scale || get.var) # TODO: adapt this line or the lines for rv calculation when scale ==
+    use.var <- (is.null(subset_row) || scale || get.var) 
     if (use.var) {
-        if(family$family != "gaussian"){
+        if(family$family == "poisson" | family$family == "Negative Binomial"){
             x_transformed <- scuttle::normalizeCounts(x)
             rv <- MatrixGenerics::rowVars(DelayedArray(x_transformed), useNames = TRUE, na.rm = TRUE)
         } else{

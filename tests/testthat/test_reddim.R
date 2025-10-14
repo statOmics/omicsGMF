@@ -1,11 +1,11 @@
 
-test_that("calculateSGD() works on poisson data", {
+test_that("calculateGMF() works on poisson data", {
     set.seed(100)
-    res1 <- reducedDim(runSGD(sce, ncomponents = 5), "SGD")
+    res1 <- reducedDim(runGMF(sce, ncomponents = 5), "GMF")
     set.seed(100)
-    res2 <- calculateSGD(sce, ncomponents = 5)
+    res2 <- calculateGMF(sce, ncomponents = 5)
     set.seed(100)
-    res3 <- calculateSGD(assay(sce, 'counts'), ncomponents = 5)
+    res3 <- calculateGMF(assay(sce, 'counts'), ncomponents = 5)
 
 
     expect_identical(c(res1), c(res2), c(res3))
@@ -19,16 +19,16 @@ test_that("calculateSGD() works on poisson data", {
 })
 
 
-test_that("calculateSGD() works when introducing X and Z matrices", {
+test_that("calculateGMF() works when introducing X and Z matrices", {
     set.seed(100)
     X = matrix(rnorm(ncol(sce)*3), ncol = 3)
     Z = matrix(rnorm(nrow(sce)*3), ncol = 3)
     set.seed(100)
-    res1 <- reducedDim(runSGD(sce, X = X, Z = Z, ncomponents = 5), "SGD")
+    res1 <- reducedDim(runGMF(sce, X = X, Z = Z, ncomponents = 5), "GMF")
     set.seed(100)
-    res2 <- calculateSGD(sce, X = X, Z = Z, ncomponents = 5)
+    res2 <- calculateGMF(sce, X = X, Z = Z, ncomponents = 5)
     set.seed(100)
-    res3 <- calculateSGD(assay(sce, 'counts'), X = X, Z = Z, ncomponents = 5)
+    res3 <- calculateGMF(assay(sce, 'counts'), X = X, Z = Z, ncomponents = 5)
 
 
     expect_identical(c(res1), c(res2), c(res3))
@@ -45,19 +45,19 @@ test_that("calculateSGD() works when introducing X and Z matrices", {
 
 })
 
-test_that("calculateSGD() works on gaussian data with missing values", {
+test_that("calculateGMF() works on gaussian data with missing values", {
     set.seed(100)
-    res1 <- reducedDim(runSGD(sce,
+    res1 <- reducedDim(runGMF(sce,
                               exprs_values = "logintensities",
                               family = gaussian(),
-                              ncomponents = 5), "SGD")
+                              ncomponents = 5), "GMF")
     set.seed(100)
-    res2 <- calculateSGD(sce,
+    res2 <- calculateGMF(sce,
                          exprs_values = "logintensities",
                          family = gaussian(),
                          ncomponents = 5)
     set.seed(100)
-    res3 <- calculateSGD(assay(sce, 'logintensities'),
+    res3 <- calculateGMF(assay(sce, 'logintensities'),
                          family = gaussian(),
                          ncomponents = 5)
 
@@ -72,33 +72,33 @@ test_that("calculateSGD() works on gaussian data with missing values", {
 
 })
 
-test_that("calculateSGD_cv() works on poisson data", {
+test_that("calculateCVGMF() works on poisson data", {
     set.seed(100)
-    res1 <- metadata(runSGD_cv(sce, ncomponents = c(1:3)))$cv_SGD
+    res1 <- metadata(runCVGMF(sce, ncomponents = c(1:3)))$cv_GMF
     set.seed(100)
-    res2 <- calculateSGD_cv(sce, ncomponents = c(1:3))
+    res2 <- calculateCVGMF(sce, ncomponents = c(1:3))
     expect_identical(res1, res2)
     set.seed(100)
-    res3 <- calculateSGD_cv(assay(sce, 'counts'), ncomponents = c(1:3))
+    res3 <- calculateCVGMF(assay(sce, 'counts'), ncomponents = c(1:3))
     expect_identical(res2, res3)
 
 
 })
 
-test_that("calculateSGD_cv() works on gaussian data with missing values", {
+test_that("calculateCVGMF() works on gaussian data with missing values", {
     set.seed(100)
-    res1 <- metadata(runSGD_cv(sce,
+    res1 <- metadata(runCVGMF(sce,
                                     exprs_values = "logintensities",
                                     family = gaussian(),
-                                    ncomponents = c(1:3)))$cv_SGD
+                                    ncomponents = c(1:3)))$cv_GMF
     set.seed(100)
-    res2 <- calculateSGD_cv(sce,
+    res2 <- calculateCVGMF(sce,
                       exprs_values = "logintensities",
                       family = gaussian(),
                       ncomponents = c(1:3))
     expect_identical(res1, res2)
     set.seed(100)
-    res3 <- calculateSGD_cv(assay(sce, 'logintensities'),
+    res3 <- calculateCVGMF(assay(sce, 'logintensities'),
                                            family = gaussian(),
                                            ncomponents = c(1:3))
     expect_identical(res2, res3)
@@ -107,14 +107,14 @@ test_that("calculateSGD_cv() works on gaussian data with missing values", {
 
 
 
-test_that("calculateSGD_rank() works on poisson data", {
+test_that("calculateRankGMF() works on poisson data", {
     set.seed(100)
-    res1 <- metadata(runSGD_rank(sce, maxcomp = 5))$rank_SGD
+    res1 <- metadata(runRankGMF(sce, maxcomp = 5))$rank_GMF
     set.seed(100)
-    res2 <- calculateSGD_rank(sce, maxcomp = 5)
+    res2 <- calculateRankGMF(sce, maxcomp = 5)
     expect_identical(res1, res2)
     set.seed(100)
-    res3 <- calculateSGD_rank(assay(sce, 'counts'), maxcomp = 5)
+    res3 <- calculateRankGMF(assay(sce, 'counts'), maxcomp = 5)
     expect_identical(res2, res3)
 
 })

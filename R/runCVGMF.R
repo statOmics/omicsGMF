@@ -124,7 +124,8 @@ NULL
 #' @importFrom scuttle .bpNotSharedOrUp
 #' @importFrom sgdGMF sgdgmf.cv
 #' @importFrom stats gaussian
-.calculate_gmf_cv <- function(x, family = gaussian(), ncomponents = 1:10, ntop=NULL,
+.calculate_gmf_cv <- function(x, family = gaussian(), ncomponents = seq(1, 10, 1),
+                              ntop=NULL,
                               X = NULL, Z = NULL, offset = NULL, weights = NULL,
                               subset_row=NULL, scale=FALSE, transposed=FALSE,
                               BSPARAM = bsparam(), BPPARAM = SerialParam(),
@@ -193,14 +194,6 @@ NULL
   control.cv <- do.call(sgdGMF::set.control.cv, control.cv)
   control.cv$refit <- FALSE
 
-
-  # if (method == "airwls") control.alg = do.call("set.control.airwls", control.alg)
-  # if (method == "newton") control.alg = do.call("set.control.newton", control.alg)
-  # if (method == "msgd") control.alg = do.call("set.control.msgd", control.alg)
-  # if (method == "csgd") control.alg = do.call("set.control.csgd", control.alg)
-  # if (method == "rsgd") control.alg = do.call("set.control.rsgd", control.alg)
-
-
   sgd <- sgdGMF::sgdgmf.cv(Y = x,
                            X = X,
                            Z = Z,
@@ -244,7 +237,7 @@ setMethod("calculateCVGMF", "SingleCellExperiment", function(x, ..., exprs_value
 
 #' @export
 #' @rdname runCVGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 #' @importFrom stats gaussian
 setMethod("calculateCVGMF", "QFeatures", function(x, ..., exprs_values = NULL, dimred=NULL, n_dimred=NULL, assay.type=NULL)
 {
@@ -294,7 +287,7 @@ setMethod("runCVGMF", "SingleCellExperiment", function(x, ...,
 
 #' @export
 #' @rdname runCVGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 setMethod("runCVGMF", "QFeatures", function(x, ...,
                                           exprs_values = NULL,
                                           assay.type = NULL)

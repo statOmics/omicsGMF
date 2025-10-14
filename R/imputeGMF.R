@@ -130,7 +130,7 @@ setMethod("imputeGMF", "SingleCellExperiment", function(x,
 
 #' @export
 #' @rdname imputeGMF
-#' @import QFeatures
+#' @importFrom QFeatures QFeatures 
 #' @importFrom SummarizedExperiment assay assay<-
 #' @importFrom methods is
 setMethod("imputeGMF", "QFeatures", function(x,
