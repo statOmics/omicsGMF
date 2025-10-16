@@ -1,7 +1,7 @@
 # Creating a mock SingleCellExperiment
 set.seed(100)
 
-sce <- scuttle::mockSCE(ncells = 200, ngenes = 100)
+sce <- scuttle::mockSCE(ncells = 20, ngenes = 10)
 
 # Removing alternative experiments
 SingleCellExperiment::altExps(sce) <- NULL

@@ -1,6 +1,10 @@
-# omicsGMF 0.99.3
+# omicsGMF 0.99.5
 
-* Version bump
+* Minor changes in vignette and testthat
+
+# omicsGMF 0.99.4
+
+* Minor changes
 
 # omicsGMF 0.99.3
 

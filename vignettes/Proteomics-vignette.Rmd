@@ -123,13 +123,13 @@ effects, and therefore does not require prior correction with other tools.
 
 
 ```{r}
-sim_intensities <- matrix(rnorm(n = 20*500, mean = 1, sd = 1),
+sim_intensities <- matrix(rnorm(n = 20*50, mean = 1, sd = 1),
                           ncol = 20)
 NAs <- rbinom(n = prod(dim(sim_intensities)), size = 1, prob = 0.3) == 1
 sim_intensities[NAs] <- NA
 
 colnames(sim_intensities) <- paste0("S_", c(1:20))
-rownames(sim_intensities) <-  paste0("G_", c(1:500))
+rownames(sim_intensities) <-  paste0("G_", c(1:50))
 
 example_sce <- SingleCellExperiment(
     assays = SimpleList("logintensities" = sim_intensities),

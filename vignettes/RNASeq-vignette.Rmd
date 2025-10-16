@@ -117,7 +117,7 @@ exposition, we will further account for the `Treatment` covariate from the
 effects, and therefore does not require prior correction with other tools.
 
 ```{r}
-example_sce <- mockSCE(ncells = 20, ngenes = 500)
+example_sce <- mockSCE(ncells = 20, ngenes = 50)
 
 X <- model.matrix(~Treatment, colData(example_sce))
 ```
@@ -150,7 +150,7 @@ example_sce <- runCVGMF(
     exprs_values = "counts", # Use raw counts (no normalization)
     family = poisson(),      # Poisson model for RNA-seq count data
     ncomponents = 1:5,       # Test components from 1 to 5
-    ntop = 500               # Use top 500 most variable genes
+    ntop = 50               # Use top 50 most variable genes
 )             
 
 metadata(example_sce)$cv_GMF %>% 
@@ -183,7 +183,7 @@ example_sce <- runRankGMF(
     exprs_values="counts", 
     family = poisson(), 
     maxcomp = 10,
-    ntop = 500)
+    ntop = 50)
 
 plotRank(example_sce, maxcomp = 10)
 ```
@@ -208,7 +208,7 @@ example_sce <- runGMF(
     exprs_values="counts", 
     family = poisson(), 
     ncomponents = 3, # Use optimal dimensionality, here arbitrarily chosen as 3
-    ntop = 500,
+    ntop = 50,
     name = "GMF")
 ```
 

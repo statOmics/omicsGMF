@@ -7,7 +7,7 @@ Authors@R: c(
         person("Davide", "Risso", role=c("ctb", "fnd"), email="davide.risso@unipd.it"),
         person("Lieven", "Clement", role=c("ctb", "fnd"), email="lieven.clement@ugent.be")
 	)
-Version: 0.99.4
+Version: 0.99.5
 Date: 2025-01-14
 Title: Dimensionality reduction of (single-cell) omics data in R using omicsGMF
 Description: omicsGMF is a Bioconductor package that uses the sgdGMF-framework of the \code{sgdGMF} package for highly performant 
