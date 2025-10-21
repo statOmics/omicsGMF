@@ -1,3 +1,7 @@
+# omicsGMF 0.99.7
+
+* Version bump
+
 # omicsGMF 0.99.6
 
 * Minor changes

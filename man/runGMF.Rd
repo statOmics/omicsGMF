@@ -280,7 +280,7 @@ This means that any settings of \code{ntop}, \code{subset_row} and
 \code{scale} are ignored.
 
 If \code{x} is a numeric matrix, setting \code{transposed=TRUE} will treat
-the rows as cells and the columns as the variables/diemnsions.
+the rows as cells and the columns as the variables/dimensions.
 This allows users to manually pass in dimensionality reduction results
 without needing to wrap them in a
 \link[SingleCellExperiment]{SingleCellExperiment-class}.
