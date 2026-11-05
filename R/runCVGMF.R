@@ -198,7 +198,7 @@ NULL
                            X = X,
                            Z = Z,
                            family = family,
-                           ncomp = ncomponents,
+                           ncomps = ncomponents,
                            weights = weights,
                            offset = offset,
                            method = method,

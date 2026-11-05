@@ -62,11 +62,11 @@ NULL
     }
 
     if(is.null(attr(sgdGMF_reducedDims, "offset"))){
-        means <- attr(sgdGMF_reducedDims,'B') %*% t(attr(sgdGMF_reducedDims,'X')) +
+        means <- attr(sgdGMF_reducedDims,'Beta') %*% t(attr(sgdGMF_reducedDims,'X')) +
             attr(sgdGMF_reducedDims,'Z') %*% t(attr(sgdGMF_reducedDims,'Gamma')) +
             attr(sgdGMF_reducedDims, 'rotation') %*% t(sgdGMF_reducedDims)
     } else{
-        means <- attr(sgdGMF_reducedDims,'B') %*% t(attr(sgdGMF_reducedDims,'X')) +
+        means <- attr(sgdGMF_reducedDims,'Beta') %*% t(attr(sgdGMF_reducedDims,'X')) +
             attr(sgdGMF_reducedDims,'Z') %*% t(attr(sgdGMF_reducedDims,'Gamma')) +
             attr(sgdGMF_reducedDims, 'rotation') %*% t(sgdGMF_reducedDims) +
             attr(sgdGMF_reducedDims,'offset')
